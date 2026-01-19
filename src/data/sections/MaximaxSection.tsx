@@ -320,7 +320,7 @@ const MaximaxDemo = () => {
           disabled={completed}
           className="gap-2"
         >
-          {step === 3 ? "Complete" : "Next Step"}
+          {step === 0 || step === 2 ? "Reveal" : step === 3 ? "Complete" : "Next Step"}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
