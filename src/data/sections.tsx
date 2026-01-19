@@ -2,6 +2,7 @@ import { type ReactElement } from "react";
 import { FullWidthLayout } from "@/components/layouts";
 import { IntroductionSection } from "./sections/IntroductionSection";
 import { MaximaxSection } from "./sections/MaximaxSection";
+import { MaximinSection } from "./sections/MaximinSection";
 
 /**
  * ------------------------------------------------------------------
@@ -26,5 +27,10 @@ export const sections: ReactElement[] = [
     // Section 2: Maximax Criterion
     <FullWidthLayout key="maximax" maxWidth="xl">
         <MaximaxSection />
+    </FullWidthLayout>,
+
+    // Section 3: Maximin Criterion
+    <FullWidthLayout key="maximin" maxWidth="xl">
+        <MaximinSection />
     </FullWidthLayout>,
 ];
