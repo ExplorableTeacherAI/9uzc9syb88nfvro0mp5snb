@@ -96,12 +96,27 @@ const MaximaxDemo = () => {
 
       animateMaxColumn();
     } else if (step === 4) {
-      // Step 3: Show the final decision
+      // Step 3 instruction: Show instruction for final decision
       setRevealedRows([0, 1, 2]);
       setScanningCol(-1);
       setAnimatingRow(-1);
       setScanningMaxCol(-1);
-      setShowFinalChoice(true);
+      setShowFinalChoice(false);
+    } else if (step === 5) {
+      // Step 3 reveal: Animate showing the final decision and auto-complete
+      setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setScanningMaxCol(-1);
+
+      const showDecision = async () => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setShowFinalChoice(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setCompleted(true);
+      };
+
+      showDecision();
     }
   }, [step, alternatives.length, statesOfNature.length]);
 
@@ -156,11 +171,11 @@ const MaximaxDemo = () => {
     if (step === 3 && scanningMaxCol === rowIndex) {
       return "bg-amber-100";
     }
-    // Highlight the max after scanning completes (step >= 3 and scanning done) or in step 4
+    // Highlight the max after scanning completes (step >= 3 and scanning done) or in step 4+
     if (step === 3 && scanningMaxCol === -1 && rowIndex === maximaxIndex) {
       return "bg-primary/20";
     }
-    if (step === 4 && rowIndex === maximaxIndex) {
+    if (step >= 4 && rowIndex === maximaxIndex) {
       return "bg-primary/20";
     }
     return "";
@@ -320,17 +335,11 @@ const MaximaxDemo = () => {
           Reset
         </Button>
         <Button
-          onClick={() => {
-            if (step === 4) {
-              setCompleted(true);
-            } else {
-              setStep(step + 1);
-            }
-          }}
-          disabled={completed}
+          onClick={() => setStep(step + 1)}
+          disabled={completed || step === 5}
           className="gap-2"
         >
-          {step === 0 || step === 2 ? "Reveal" : step === 4 ? "Complete" : "Next Step"}
+          {step === 0 || step === 2 || step === 4 ? "Reveal" : "Next Step"}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
