@@ -409,29 +409,6 @@ export const MaximinSection = () => {
         </div>
       </Section>
 
-      <Section id="maximin-comparison" padding="md">
-        <Heading level={2}>Maximax vs. Maximin: A Quick Comparison</Heading>
-        <div className="bg-muted/30 rounded-lg p-4 border border-border mt-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="text-center p-3 bg-primary/10 rounded-lg">
-              <p className="font-semibold text-primary">Maximax chose:</p>
-              <p className="text-lg">Product A</p>
-              <p className="text-sm text-muted-foreground">Best case: $200k</p>
-              <p className="text-sm text-red-500">Worst case: -$50k</p>
-            </div>
-            <div className="text-center p-3 bg-secondary/10 rounded-lg">
-              <p className="font-semibold text-secondary">Maximin chose:</p>
-              <p className="text-lg">Product C</p>
-              <p className="text-sm text-muted-foreground">Best case: $80k</p>
-              <p className="text-sm text-green-600">Worst case: $80k</p>
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground text-center mt-4">
-            Same data, different philosophies, different decisions!
-          </p>
-        </div>
-      </Section>
-
     </>
   );
 };
