@@ -56,15 +56,15 @@ const MaximaxDemo = () => {
     }
 
     if (step === 1 && isMax) {
-      return "bg-green-100 ring-2 ring-green-500";
+      return "bg-green-100";
     }
 
     if (step === 2) {
       if (isMaximax) {
-        return "bg-primary/20 ring-2 ring-primary animate-pulse";
+        return "bg-primary/20 animate-pulse";
       }
       if (isMax) {
-        return "bg-green-100 ring-1 ring-green-400";
+        return "bg-green-100";
       }
     }
 
