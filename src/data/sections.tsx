@@ -4,6 +4,7 @@ import { IntroductionSection } from "./sections/IntroductionSection";
 import { MaximaxSection } from "./sections/MaximaxSection";
 import { MaximinSection } from "./sections/MaximinSection";
 import { MinimaxRegretSection } from "./sections/MinimaxRegretSection";
+import { ComparisonSection } from "./sections/ComparisonSection";
 
 /**
  * ------------------------------------------------------------------
@@ -38,5 +39,10 @@ export const sections: ReactElement[] = [
     // Section 4: Minimax Regret Criterion
     <FullWidthLayout key="minimax-regret" maxWidth="xl">
         <MinimaxRegretSection />
+    </FullWidthLayout>,
+
+    // Section 5: Comparing the Criteria
+    <FullWidthLayout key="comparison" maxWidth="xl">
+        <ComparisonSection />
     </FullWidthLayout>,
 ];
