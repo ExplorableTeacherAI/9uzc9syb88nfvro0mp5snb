@@ -129,14 +129,13 @@ const MaximaxDemo = () => {
                   {state}
                 </TableHead>
               ))}
-              <TableHead
-                className={cn(
-                  "text-center font-bold border-l-2 border-primary/50 bg-primary/5",
-                  step >= 1 ? "opacity-100" : "opacity-30"
-                )}
-              >
-                Max Payoff
-              </TableHead>
+              {step >= 1 && (
+                <TableHead
+                  className="text-center font-bold border-l-2 border-primary/50 bg-primary/5"
+                >
+                  Max Payoff
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -161,18 +160,19 @@ const MaximaxDemo = () => {
                     </span>
                   </TableCell>
                 ))}
-                <TableCell
-                  className={cn(
-                    "text-center border-l-2 border-primary/50 font-bold transition-all duration-300",
-                    step >= 1 ? "opacity-100" : "opacity-30",
-                    step === 2 && rowIndex === maximaxIndex && "bg-primary/20 text-primary"
-                  )}
-                >
-                  ${maxPayoffs[rowIndex]}k
-                  {step === 2 && rowIndex === maximaxIndex && (
-                    <span className="ml-2 text-xs">← Best!</span>
-                  )}
-                </TableCell>
+                {step >= 1 && (
+                  <TableCell
+                    className={cn(
+                      "text-center border-l-2 border-primary/50 font-bold transition-all duration-300",
+                      step === 2 && rowIndex === maximaxIndex && "bg-primary/20 text-primary"
+                    )}
+                  >
+                    ${maxPayoffs[rowIndex]}k
+                    {step === 2 && rowIndex === maximaxIndex && (
+                      <span className="ml-2 text-xs">← Best!</span>
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
