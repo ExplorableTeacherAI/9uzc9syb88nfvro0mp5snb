@@ -13,6 +13,7 @@ import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
  */
 const MaximaxDemo = () => {
   const [step, setStep] = useState(0);
+  const [completed, setCompleted] = useState(false);
 
   const alternatives = ["Launch Product A", "Launch Product B", "Launch Product C"];
   const statesOfNature = ["High Demand", "Medium Demand", "Low Demand"];
@@ -86,13 +87,13 @@ const MaximaxDemo = () => {
             key={i}
             className={cn(
               "flex items-center gap-2",
-              i <= step ? "text-primary" : "text-muted-foreground"
+              i <= step || (completed && i === steps.length - 1) ? "text-primary" : "text-muted-foreground"
             )}
           >
             <div
               className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all",
-                i < step ? "bg-primary text-primary-foreground border-primary" :
+                i < step || (completed && i <= step) ? "bg-primary text-primary-foreground border-primary" :
                 i === step ? "border-primary text-primary" :
                 "border-muted-foreground/30"
               )}
@@ -195,19 +196,28 @@ const MaximaxDemo = () => {
       <div className="flex gap-2">
         <Button
           variant="outline"
-          onClick={() => setStep(0)}
-          disabled={step === 0}
+          onClick={() => {
+            setStep(0);
+            setCompleted(false);
+          }}
+          disabled={step === 0 && !completed}
           className="gap-2"
         >
           <RotateCcw className="w-4 h-4" />
           Reset
         </Button>
         <Button
-          onClick={() => setStep(Math.min(step + 1, steps.length - 1))}
-          disabled={step === steps.length - 1}
+          onClick={() => {
+            if (step === steps.length - 1) {
+              setCompleted(true);
+            } else {
+              setStep(step + 1);
+            }
+          }}
+          disabled={completed}
           className="gap-2"
         >
-          Next Step
+          {step === steps.length - 1 ? "Complete" : "Next Step"}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
