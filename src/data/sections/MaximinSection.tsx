@@ -368,15 +368,14 @@ export const MaximinSection = () => {
           <Hoverable tooltip="Someone who expects unfavorable outcomes and makes decisions to minimize potential losses.">
             pessimist
           </Hoverable>
-          . The name comes from "MAXimum of the MINimums" — you look at the worst possible outcome
-          for each alternative and then pick the one with the best worst-case scenario.
+          . The name comes from "<strong>MAXI</strong>mum of the <strong>MIN</strong>imums" — you look at the worst possible outcome for each alternative and then pick the one with the best worst-case scenario. Unlike the optimist who chases the highest highs, the pessimist focuses on avoiding the lowest lows.
         </InteractiveParagraph>
         <InteractiveParagraph>
-          This approach is about{" "}
+          This approach is fundamentally about{" "}
           <Hoverable tooltip="A strategy that focuses on limiting downside risk rather than maximizing upside potential.">
             risk aversion
           </Hoverable>
-          . You're asking: "If everything goes wrong, which choice leaves me in the best position?"
+          . You're asking yourself: "If everything goes wrong, which choice leaves me in the best position?" It's the mindset of someone who wants to sleep well at night, knowing they're protected against disaster — even if it means giving up some potential upside.
         </InteractiveParagraph>
       </Section>
 

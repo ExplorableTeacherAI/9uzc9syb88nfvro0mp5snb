@@ -225,23 +225,25 @@ export const IntroductionSection = () => {
       <Section id="intro-challenge" padding="md">
         <Heading level={2} enableMath={false}>The Challenge: Which Alternative Should You Choose?</Heading>
         <InteractiveParagraph enableMath={false}>
-          Looking at the matrix above, which product would you launch? Product A could give you the highest profit ($200k), but it could also result in a loss (-$50k). Product C guarantees $80k regardless of what happens, but you might be leaving money on the table.
+          Looking at the matrix above, which product would you launch? This is where decision-making gets interesting. Product A could give you the highest profit of{" "}
+          <strong>$200k</strong>, but it could also result in a loss of{" "}
+          <strong>−$50k</strong>. On the other hand, Product C guarantees{" "}
+          <strong>$80k</strong> regardless of what happens — but you might be leaving money on the table if the market turns out to be favorable.
         </InteractiveParagraph>
         <InteractiveParagraph enableMath={false}>
-          Different decision criteria lead to different choices. In the following sections, we'll
-          explore three popular approaches:{" "}
+          There's no single "correct" answer here — different decision criteria lead to different choices depending on your personality and risk tolerance. In the following sections, we'll explore three popular approaches:{" "}
           <Hoverable tooltip="Choose the alternative with the best possible outcome (optimistic approach).">
             Maximax
-          </Hoverable>
-          ,{" "}
+          </Hoverable>{" "}
+          for the optimist who believes the best will happen,{" "}
           <Hoverable tooltip="Choose the alternative with the best worst-case outcome (pessimistic approach).">
             Maximin
-          </Hoverable>
-          , and{" "}
+          </Hoverable>{" "}
+          for the pessimist who wants to protect against the worst, and{" "}
           <Hoverable tooltip="Minimize the maximum regret you could experience (opportunity cost approach).">
             Minimax Regret
-          </Hoverable>
-          .
+          </Hoverable>{" "}
+          for those who want to minimize the "what if" feeling of missed opportunities.
         </InteractiveParagraph>
       </Section>
     </>
