@@ -25,6 +25,10 @@ const MinimaxRegretDemo = () => {
   const [revealedMaxRegretRows, setRevealedMaxRegretRows] = useState<number[]>([]);
   const [scanningMaxRegretRow, setScanningMaxRegretRow] = useState(-1);
   const [showFinalChoice, setShowFinalChoice] = useState(false);
+  // New state for regret calculation animation
+  const [calculatingRegretCell, setCalculatingRegretCell] = useState<{row: number, col: number} | null>(null);
+  const [showCalculation, setShowCalculation] = useState(false);
+  const [revealedRegretCells, setRevealedRegretCells] = useState<string[]>([]);
 
   const alternatives = ["Product A", "Product B", "Product C"];
   const statesOfNature = ["High Demand", "Medium Demand", "Low Demand"];
@@ -65,6 +69,9 @@ const MinimaxRegretDemo = () => {
       setScanningRegretCol(-1);
       setScanningMaxRegretRow(-1);
       setShowFinalChoice(false);
+      setCalculatingRegretCell(null);
+      setShowCalculation(false);
+      setRevealedRegretCells([]);
     } else if (step === 1) {
       // Step 1 reveal: Animate finding best in each column
       setShowBestRow(true);
@@ -97,13 +104,40 @@ const MinimaxRegretDemo = () => {
       setScanningRow(-1);
       setShowRegretMatrix(false);
       setShowFinalChoice(false);
+      setRevealedRegretCells([]);
     } else if (step === 3) {
-      // Step 2 reveal: Show regret matrix with animation
+      // Step 2 reveal: Animate regret calculation cell by cell
       setRevealedBestCols([0, 1, 2]);
-      setShowRegretMatrix(true);
+      setShowRegretMatrix(false);
       setShowMaxRegretColumn(false);
       setRevealedMaxRegretRows([]);
       setShowFinalChoice(false);
+      setRevealedRegretCells([]);
+
+      const animateRegretCalculation = async () => {
+        for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
+          for (let colIdx = 0; colIdx < statesOfNature.length; colIdx++) {
+            // Highlight current cell
+            setCalculatingRegretCell({ row: rowIdx, col: colIdx });
+            await new Promise(resolve => setTimeout(resolve, 400));
+
+            // Show calculation formula
+            setShowCalculation(true);
+            await new Promise(resolve => setTimeout(resolve, 600));
+
+            // Reveal the regret value
+            setRevealedRegretCells(prev => [...prev, `${rowIdx}-${colIdx}`]);
+            setShowCalculation(false);
+            await new Promise(resolve => setTimeout(resolve, 300));
+          }
+        }
+        setCalculatingRegretCell(null);
+        // After all cells calculated, show regret matrix
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setShowRegretMatrix(true);
+      };
+
+      animateRegretCalculation();
     } else if (step === 4) {
       // Step 3 instruction: Show instruction for finding max regret
       setShowRegretMatrix(true);
@@ -182,6 +216,8 @@ const MinimaxRegretDemo = () => {
     const isBestInColumn = payoffs[rowIndex][colIndex] === bestInColumn[colIndex];
     const isScanning = scanningCol === colIndex && scanningRow === rowIndex;
     const isFoundBest = scanningCol === colIndex && scanningRow === -1 && isBestInColumn && !revealedBestCols.includes(colIndex);
+    const isCalculating = calculatingRegretCell?.row === rowIndex && calculatingRegretCell?.col === colIndex;
+    const isRegretRevealed = revealedRegretCells.includes(`${rowIndex}-${colIndex}`);
 
     if (step === 0) {
       return "bg-background";
@@ -199,11 +235,60 @@ const MinimaxRegretDemo = () => {
       }
     }
 
-    if (step >= 2 && isBestInColumn) {
+    // Step 3: Regret calculation animation
+    if (step === 3) {
+      if (isCalculating) {
+        return "bg-amber-100";
+      }
+      if (isRegretRevealed) {
+        return "bg-green-100";
+      }
+      if (isBestInColumn) {
+        return "bg-green-100";
+      }
+    }
+
+    if (step >= 2 && step !== 3 && isBestInColumn) {
       return "bg-green-100";
     }
 
+    // After step 3 with revealed regrets
+    if (step >= 4) {
+      if (isBestInColumn) {
+        return "bg-green-100";
+      }
+    }
+
     return "bg-background";
+  };
+
+  // Get cell content for payoff matrix (shows calculation during step 3)
+  const getPayoffCellContent = (rowIndex: number, colIndex: number) => {
+    const payoff = payoffs[rowIndex][colIndex];
+    const best = bestInColumn[colIndex];
+    const regret = regretMatrix[rowIndex][colIndex];
+    const isCalculating = calculatingRegretCell?.row === rowIndex && calculatingRegretCell?.col === colIndex;
+    const isRegretRevealed = revealedRegretCells.includes(`${rowIndex}-${colIndex}`);
+
+    // During step 3 animation
+    if (step === 3) {
+      if (isCalculating && showCalculation) {
+        // Show the calculation formula
+        return (
+          <div className="flex flex-col items-center">
+            <span className="text-xs text-muted-foreground">{best} - {payoff}</span>
+            <span className="text-lg font-bold text-green-600">= {regret}</span>
+          </div>
+        );
+      }
+      if (isRegretRevealed) {
+        // Show regret value
+        return <span className="text-lg font-bold text-green-600">{regret}</span>;
+      }
+    }
+
+    // Default: show payoff
+    return <span className="text-lg font-medium">${payoff}k</span>;
   };
 
   const getRegretCellStyle = (rowIndex: number, colIndex: number) => {
@@ -326,7 +411,11 @@ const MinimaxRegretDemo = () => {
       <div className="space-y-6">
         {/* Payoff Matrix */}
         <div>
-          <h4 className="font-medium mb-2 text-sm text-muted-foreground">Payoff Matrix</h4>
+          <h4 className="font-medium mb-2 text-sm text-muted-foreground">
+            {step === 3 && revealedRegretCells.length > 0
+              ? "Calculating Regret Values..."
+              : "Payoff Matrix"}
+          </h4>
           <div className="overflow-hidden">
             <Table className="border border-border rounded-lg">
               <TableHeader>
@@ -349,7 +438,7 @@ const MinimaxRegretDemo = () => {
                           getPayoffCellStyle(rowIndex, colIndex)
                         )}
                       >
-                        <span className="text-lg font-medium">${payoff}k</span>
+                        {getPayoffCellContent(rowIndex, colIndex)}
                       </TableCell>
                     ))}
                   </TableRow>
