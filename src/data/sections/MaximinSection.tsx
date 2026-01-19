@@ -364,15 +364,13 @@ export const MaximinSection = () => {
       <Section id="maximin-concept" padding="md">
         <Heading level={2}>What is Maximin?</Heading>
         <InteractiveParagraph>
-          The Maximin criterion is the choice of a{" "}
+          Maximin is the{" "}
           <Hoverable tooltip="Someone who expects unfavorable outcomes and makes decisions to minimize potential losses.">
-            pessimist
-          </Hoverable>
-          . The name comes from "<strong>MAXI</strong>mum of the <strong>MIN</strong>imums" — you look at the worst possible outcome for each alternative and then pick the one with the best worst-case scenario. Unlike the optimist who chases the highest highs, the pessimist focuses on avoiding the lowest lows. This approach is fundamentally about{" "}
+            pessimist's
+          </Hoverable>{" "}choice. The name means "<strong>MAXI</strong>mum of the <strong>MIN</strong>imums" — find the worst outcome for each option, then pick the one with the best worst-case. It's about{" "}
           <Hoverable tooltip="A strategy that focuses on limiting downside risk rather than maximizing upside potential.">
             risk aversion
-          </Hoverable>
-          . You're asking yourself: "If everything goes wrong, which choice leaves me in the best position?" It's the mindset of someone who wants to sleep well at night, knowing they're protected against disaster — even if it means giving up some potential upside.
+          </Hoverable>: "If everything goes wrong, which choice leaves me best off?"
         </InteractiveParagraph>
       </Section>
 

@@ -363,11 +363,10 @@ export const MaximaxSection = () => {
       <Section id="maximax-concept" padding="md">
         <Heading level={2}>What is Maximax?</Heading>
         <InteractiveParagraph>
-          The Maximax criterion is the choice of an{" "}
+          Maximax is the{" "}
           <Hoverable tooltip="Someone who expects the most favorable outcome to occur and makes decisions accordingly.">
-            optimist
-          </Hoverable>
-          . The name comes from "<strong>MAXI</strong>mum of the <strong>MAX</strong>imums" — you look at the best possible outcome for each alternative and then pick the one with the highest best-case scenario. In other words, you're asking yourself: "What's the absolute best that could happen with each choice?" and then going for the one with the biggest upside. This approach makes sense when you believe that luck is on your side, or when the potential upside is so attractive that you're willing to accept higher risk. It's the mindset of entrepreneurs and risk-takers who focus on opportunities rather than threats.
+            optimist's
+          </Hoverable>{" "}choice. The name means "<strong>MAXI</strong>mum of the <strong>MAX</strong>imums" — find the best outcome for each option, then pick the one with the highest upside. It's the mindset of entrepreneurs who focus on opportunities and are willing to accept risk for bigger rewards.
         </InteractiveParagraph>
       </Section>
 
