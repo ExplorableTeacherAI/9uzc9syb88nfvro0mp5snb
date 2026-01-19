@@ -587,11 +587,31 @@ export const MinimaxRegretSection = () => {
         </div>
       </Section>
 
+      <Section id="minimax-regret-algorithm" padding="md">
+        <Heading level={2}>How Minimax Regret Works</Heading>
+        <InteractiveParagraph>
+          The algorithm minimizes your worst "what if" feeling:
+        </InteractiveParagraph>
+        <ol className="list-decimal list-inside space-y-2 mt-4 ml-4">
+          <li className="text-muted-foreground">
+            <span className="text-foreground">For each state of nature, find the best payoff</span> — the maximum in each column.
+          </li>
+          <li className="text-muted-foreground">
+            <span className="text-foreground">Calculate regret for each cell</span> — subtract the cell value from the best in its column.
+          </li>
+          <li className="text-muted-foreground">
+            <span className="text-foreground">For each alternative, find its maximum regret</span> — the worst "what if" for that choice.
+          </li>
+          <li className="text-muted-foreground">
+            <span className="text-foreground">Select the alternative with the smallest maximum regret</span> — this is your Minimax Regret choice.
+          </li>
+        </ol>
+      </Section>
+
       <Section id="minimax-regret-demo" padding="md">
         <Heading level={2}>Interactive Example</Heading>
         <InteractiveParagraph>
-          This criterion requires building a regret matrix first. Walk through each step to see
-          how regret is calculated and how the final decision is made.
+          Walk through each step to see how the regret matrix is built and the final decision is made.
         </InteractiveParagraph>
         <div className="mt-6">
           <MinimaxRegretDemo />
