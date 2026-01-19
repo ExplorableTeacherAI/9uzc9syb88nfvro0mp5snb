@@ -15,6 +15,7 @@ const MaximaxDemo = () => {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [animatingRow, setAnimatingRow] = useState(-1);
+  const [scanningCol, setScanningCol] = useState(-1);
   const [showMaxColumn, setShowMaxColumn] = useState(false);
   const [revealedRows, setRevealedRows] = useState<number[]>([]);
 
@@ -30,20 +31,32 @@ const MaximaxDemo = () => {
   const maxPayoffs = payoffs.map(row => Math.max(...row));
   // Index of the best maximum (Maximax choice)
   const maximaxIndex = maxPayoffs.indexOf(Math.max(...maxPayoffs));
+  // Find column index of max value in each row
+  const maxColIndices = payoffs.map(row => row.indexOf(Math.max(...row)));
 
   // Animation effect when entering step 1
   useEffect(() => {
     if (step === 1) {
       setShowMaxColumn(true);
       setRevealedRows([]);
+      setScanningCol(-1);
 
-      // Animate each row sequentially
+      // Animate each row sequentially with column scanning
       const animateRows = async () => {
-        for (let i = 0; i < alternatives.length; i++) {
-          setAnimatingRow(i);
-          await new Promise(resolve => setTimeout(resolve, 600));
-          setRevealedRows(prev => [...prev, i]);
-          await new Promise(resolve => setTimeout(resolve, 200));
+        for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
+          setAnimatingRow(rowIdx);
+
+          // Scan through each column in the row
+          for (let colIdx = 0; colIdx < statesOfNature.length; colIdx++) {
+            setScanningCol(colIdx);
+            await new Promise(resolve => setTimeout(resolve, 300));
+          }
+
+          // Highlight the max and move to column
+          setScanningCol(-1);
+          await new Promise(resolve => setTimeout(resolve, 400));
+          setRevealedRows(prev => [...prev, rowIdx]);
+          await new Promise(resolve => setTimeout(resolve, 300));
         }
         setAnimatingRow(-1);
       };
@@ -53,10 +66,12 @@ const MaximaxDemo = () => {
       setShowMaxColumn(false);
       setRevealedRows([]);
       setAnimatingRow(-1);
+      setScanningCol(-1);
     } else if (step === 2) {
       setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
     }
-  }, [step, alternatives.length]);
+  }, [step, alternatives.length, statesOfNature.length]);
 
   const steps = [
     {
@@ -80,16 +95,24 @@ const MaximaxDemo = () => {
     const value = payoffs[rowIndex][colIndex];
     const isMax = value === maxPayoffs[rowIndex];
     const isMaximax = rowIndex === maximaxIndex && isMax && step >= 2;
-    const isAnimating = animatingRow === rowIndex && isMax;
+    const isCurrentRow = animatingRow === rowIndex;
+    const isScanning = isCurrentRow && scanningCol === colIndex;
+    const isFoundMax = isCurrentRow && scanningCol === -1 && isMax && !revealedRows.includes(rowIndex);
 
     if (step === 0) {
       return "bg-background";
     }
 
     if (step === 1) {
-      if (isAnimating) {
+      // Currently scanning this cell
+      if (isScanning) {
+        return "bg-amber-100 ring-2 ring-amber-400";
+      }
+      // Found the max, highlighting it before moving
+      if (isFoundMax) {
         return "bg-green-200 scale-110 shadow-lg z-10";
       }
+      // Already revealed max
       if (isMax && revealedRows.includes(rowIndex)) {
         return "bg-green-100";
       }
@@ -204,15 +227,15 @@ const MaximaxDemo = () => {
                     )}
                   >
                     <div className="flex items-center justify-center gap-2">
-                      {animatingRow === rowIndex && (
-                        <ArrowRight className="w-4 h-4 text-green-600 animate-pulse" />
+                      {animatingRow === rowIndex && scanningCol === -1 && !revealedRows.includes(rowIndex) && (
+                        <ArrowRight className="w-4 h-4 text-green-600 animate-bounce" />
                       )}
                       <span
                         className={cn(
-                          "transition-all duration-300",
+                          "transition-all duration-500",
                           revealedRows.includes(rowIndex)
-                            ? "opacity-100 translate-x-0"
-                            : "opacity-0 -translate-x-4"
+                            ? "opacity-100 translate-x-0 scale-100"
+                            : "opacity-0 -translate-x-8 scale-75"
                         )}
                       >
                         ${maxPayoffs[rowIndex]}k
