@@ -6,7 +6,7 @@ import { Hoverable } from "@/components/annotations/Hoverable";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/atoms/ui/table";
 import { Button } from "@/components/atoms/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronRight, RotateCcw, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
 
 /**
  * Interactive Maximax Demonstration
@@ -106,11 +106,11 @@ const MaximaxDemo = () => {
     if (step === 1) {
       // Currently scanning this cell
       if (isScanning) {
-        return "bg-amber-100 ring-2 ring-amber-400";
+        return "bg-amber-100";
       }
       // Found the max, highlighting it before moving
       if (isFoundMax) {
-        return "bg-green-200 scale-110 shadow-lg z-10";
+        return "bg-green-200";
       }
       // Already revealed max
       if (isMax && revealedRows.includes(rowIndex)) {
@@ -120,7 +120,7 @@ const MaximaxDemo = () => {
 
     if (step === 2) {
       if (isMaximax) {
-        return "bg-primary/20 animate-pulse";
+        return "bg-primary/20";
       }
       if (isMax) {
         return "bg-green-100";
@@ -207,14 +207,11 @@ const MaximaxDemo = () => {
                   <TableCell
                     key={colIndex}
                     className={cn(
-                      "text-center transition-all duration-300",
+                      "text-center transition-colors duration-300",
                       getCellStyle(rowIndex, colIndex)
                     )}
                   >
-                    <span className={cn(
-                      "text-lg font-medium",
-                      payoff >= 100 ? "text-green-600" : payoff >= 0 ? "text-foreground" : "text-red-500"
-                    )}>
+                    <span className="text-lg font-medium">
                       ${payoff}k
                     </span>
                   </TableCell>
@@ -222,26 +219,23 @@ const MaximaxDemo = () => {
                 {showMaxColumn && (
                   <TableCell
                     className={cn(
-                      "text-center border-l-2 border-primary/50 font-bold transition-all duration-300",
-                      step === 2 && rowIndex === maximaxIndex && "bg-primary/20 text-primary"
+                      "text-center border-l-2 border-primary/50 font-bold transition-colors duration-300",
+                      step === 2 && rowIndex === maximaxIndex && "bg-primary/20"
                     )}
                   >
-                    <div className="flex items-center justify-center gap-2">
-                      {animatingRow === rowIndex && scanningCol === -1 && !revealedRows.includes(rowIndex) && (
-                        <ArrowRight className="w-4 h-4 text-green-600 animate-bounce" />
-                      )}
+                    <div className="flex items-center justify-center gap-1">
                       <span
                         className={cn(
-                          "transition-all duration-500",
+                          "text-green-600 transition-opacity duration-500",
                           revealedRows.includes(rowIndex)
-                            ? "opacity-100 translate-x-0 scale-100"
-                            : "opacity-0 -translate-x-8 scale-75"
+                            ? "opacity-100"
+                            : "opacity-0"
                         )}
                       >
                         ${maxPayoffs[rowIndex]}k
                       </span>
                       {step === 2 && rowIndex === maximaxIndex && (
-                        <span className="text-xs">← Best!</span>
+                        <span className="text-xs text-primary">← Best!</span>
                       )}
                     </div>
                   </TableCell>
