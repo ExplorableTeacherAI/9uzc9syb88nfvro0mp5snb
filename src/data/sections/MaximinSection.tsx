@@ -139,11 +139,11 @@ const MaximinDemo = () => {
       }
       // Found the min, highlighting it before moving
       if (isFoundMin) {
-        return "bg-red-200";
+        return "bg-green-200";
       }
       // Already revealed min
       if (isMin && revealedRows.includes(rowIndex)) {
-        return "bg-red-100";
+        return "bg-green-100";
       }
     }
 
@@ -152,7 +152,7 @@ const MaximinDemo = () => {
         return "bg-secondary/20";
       }
       if (isMin) {
-        return "bg-red-100";
+        return "bg-green-100";
       }
     }
 
@@ -287,7 +287,7 @@ const MaximinDemo = () => {
                     <div className="flex items-center justify-center gap-1">
                       <span
                         className={cn(
-                          "text-red-600 transition-opacity duration-500",
+                          "text-green-600 transition-opacity duration-500",
                           revealedRows.includes(rowIndex)
                             ? "opacity-100"
                             : "opacity-0"
