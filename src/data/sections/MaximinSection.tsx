@@ -432,30 +432,6 @@ export const MaximinSection = () => {
         </div>
       </Section>
 
-      <Section id="maximin-pros-cons" padding="md">
-        <Heading level={2}>When to Use Maximin</Heading>
-        <div className="grid gap-4 mt-4 md:grid-cols-2">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h3 className="font-semibold text-green-700 mb-2">Strengths</h3>
-            <ul className="text-sm text-green-800 space-y-1">
-              <li>• Provides a safety net against worst outcomes</li>
-              <li>• Good for high-stakes decisions where losses hurt</li>
-              <li>• Appropriate when you can't afford to fail</li>
-              <li>• Simple and conservative approach</li>
-            </ul>
-          </div>
-
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <h3 className="font-semibold text-amber-700 mb-2">Limitations</h3>
-            <ul className="text-sm text-amber-800 space-y-1">
-              <li>• May miss excellent opportunities</li>
-              <li>• Overly pessimistic in many situations</li>
-              <li>• Ignores favorable outcomes entirely</li>
-              <li>• Can lead to overly cautious decisions</li>
-            </ul>
-          </div>
-        </div>
-      </Section>
     </>
   );
 };

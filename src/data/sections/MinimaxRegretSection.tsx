@@ -605,30 +605,6 @@ export const MinimaxRegretSection = () => {
         </div>
       </Section>
 
-      <Section id="minimax-regret-pros-cons" padding="md">
-        <Heading level={2}>When to Use Minimax Regret</Heading>
-        <div className="grid gap-4 mt-4 md:grid-cols-2">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h3 className="font-semibold text-green-700 mb-2">Strengths</h3>
-            <ul className="text-sm text-green-800 space-y-1">
-              <li>• Balanced between optimism and pessimism</li>
-              <li>• Considers opportunity cost explicitly</li>
-              <li>• Reduces "hindsight regret"</li>
-              <li>• Good when all outcomes are somewhat likely</li>
-            </ul>
-          </div>
-
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <h3 className="font-semibold text-amber-700 mb-2">Limitations</h3>
-            <ul className="text-sm text-amber-800 space-y-1">
-              <li>• More complex to calculate</li>
-              <li>• Still ignores actual probabilities</li>
-              <li>• May lead to "compromise" solutions</li>
-              <li>• Sensitive to irrelevant alternatives</li>
-            </ul>
-          </div>
-        </div>
-      </Section>
     </>
   );
 };

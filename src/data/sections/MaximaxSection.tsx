@@ -405,30 +405,6 @@ export const MaximaxSection = () => {
         </div>
       </Section>
 
-      <Section id="maximax-pros-cons" padding="md">
-        <Heading level={2}>When to Use Maximax</Heading>
-        <div className="grid gap-4 mt-4 md:grid-cols-2">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h3 className="font-semibold text-green-700 mb-2">Strengths</h3>
-            <ul className="text-sm text-green-800 space-y-1">
-              <li>• Simple and easy to understand</li>
-              <li>• Focuses on opportunity and growth</li>
-              <li>• Good when upside potential is critical</li>
-              <li>• Appropriate for risk-tolerant decision-makers</li>
-            </ul>
-          </div>
-
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-            <h3 className="font-semibold text-amber-700 mb-2">Limitations</h3>
-            <ul className="text-sm text-amber-800 space-y-1">
-              <li>• Ignores possible losses and risks</li>
-              <li>• May lead to overly risky decisions</li>
-              <li>• Doesn't consider probability of outcomes</li>
-              <li>• Not suitable for risk-averse situations</li>
-            </ul>
-          </div>
-        </div>
-      </Section>
     </>
   );
 };
