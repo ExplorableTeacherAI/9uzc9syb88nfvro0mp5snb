@@ -571,7 +571,9 @@ export const MinimaxRegretSection = () => {
           </Hoverable> (also called opportunity cost) measures the "what if" feeling — how much better off you could have been if you had made a different choice, given what actually happened.
         </InteractiveParagraph>
         <InteractiveParagraph>
-          For example, if you chose Product B and the market had high demand, you'd earn $150k. But if you had chosen Product A, you would have earned $200k. Your regret is $200k - $150k = $50k.
+          For example, if you chose Product B and the market had high demand, you'd earn{" "}
+          <strong>$150k</strong>. But if you had chosen Product A, you would have earned{" "}
+          <strong>$200k</strong>. Your regret is <strong>$200k − $150k = $50k</strong>.
         </InteractiveParagraph>
       </Section>
 
