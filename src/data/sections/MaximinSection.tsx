@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Section } from "@/components/templates";
 import { Heading } from "@/components/molecules/Heading";
 import { InteractiveParagraph } from "@/components/molecules/InteractiveParagraph";
@@ -13,6 +13,13 @@ import { ChevronRight, RotateCcw, Shield } from "lucide-react";
  */
 const MaximinDemo = () => {
   const [step, setStep] = useState(0);
+  const [completed, setCompleted] = useState(false);
+  const [animatingRow, setAnimatingRow] = useState(-1);
+  const [scanningCol, setScanningCol] = useState(-1);
+  const [scanningMinCol, setScanningMinCol] = useState(-1);
+  const [showMinColumn, setShowMinColumn] = useState(false);
+  const [revealedRows, setRevealedRows] = useState<number[]>([]);
+  const [showFinalChoice, setShowFinalChoice] = useState(false);
 
   const alternatives = ["Launch Product A", "Launch Product B", "Launch Product C"];
   const statesOfNature = ["High Demand", "Medium Demand", "Low Demand"];
@@ -27,43 +34,125 @@ const MaximinDemo = () => {
   // Index of the best minimum (Maximin choice)
   const maximinIndex = minPayoffs.indexOf(Math.max(...minPayoffs));
 
-  const steps = [
-    {
-      title: "Step 1: Examine the Decision Matrix",
-      description: "We start with our payoff table. A pessimist assumes the worst will happen.",
-      highlight: "none",
-    },
-    {
-      title: "Step 2: Find the Minimum Payoff for Each Alternative",
-      description: "For each row (alternative), identify the worst possible outcome — the lowest payoff that could happen if things go badly.",
-      highlight: "minInRow",
-    },
-    {
-      title: "Step 3: Choose the Maximum of the Minimums",
-      description: "Compare all the minimum payoffs and select the alternative with the highest worst-case outcome. This guarantees the best 'floor' for your decision.",
-      highlight: "maximin",
-    },
-  ];
+  // Animation effect based on step
+  useEffect(() => {
+    if (step === 0) {
+      // Step 1 instruction: Show original table
+      setShowMinColumn(false);
+      setRevealedRows([]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setScanningMinCol(-1);
+      setShowFinalChoice(false);
+    } else if (step === 1) {
+      // Step 1 reveal: Animate finding min for each row
+      setShowMinColumn(true);
+      setRevealedRows([]);
+      setScanningCol(-1);
+      setShowFinalChoice(false);
+
+      const animateRows = async () => {
+        for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
+          setAnimatingRow(rowIdx);
+
+          // Scan through each column in the row
+          for (let colIdx = 0; colIdx < statesOfNature.length; colIdx++) {
+            setScanningCol(colIdx);
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+
+          // Highlight the min and move to column
+          setScanningCol(-1);
+          await new Promise(resolve => setTimeout(resolve, 600));
+          setRevealedRows(prev => [...prev, rowIdx]);
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        setAnimatingRow(-1);
+      };
+
+      animateRows();
+    } else if (step === 2) {
+      // Step 2 instruction: Show instruction for selecting max of min
+      setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setScanningMinCol(-1);
+      setShowFinalChoice(false);
+    } else if (step === 3) {
+      // Step 2 reveal: Animate scanning through min column and highlight the max
+      setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setShowFinalChoice(false);
+
+      const animateMinColumn = async () => {
+        for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
+          setScanningMinCol(rowIdx);
+          await new Promise(resolve => setTimeout(resolve, 700));
+        }
+        // Keep the max highlighted after scanning
+        setScanningMinCol(-1);
+      };
+
+      animateMinColumn();
+    } else if (step === 4) {
+      // Step 3 instruction: Show instruction for final decision
+      setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setScanningMinCol(-1);
+      setShowFinalChoice(false);
+    } else if (step === 5) {
+      // Step 3 reveal: Animate showing the final decision and auto-complete
+      setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setScanningMinCol(-1);
+
+      const showDecision = async () => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setShowFinalChoice(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setCompleted(true);
+      };
+
+      showDecision();
+    }
+  }, [step, alternatives.length, statesOfNature.length]);
 
   const getCellStyle = (rowIndex: number, colIndex: number) => {
     const value = payoffs[rowIndex][colIndex];
     const isMin = value === minPayoffs[rowIndex];
-    const isMaximin = rowIndex === maximinIndex && isMin && step >= 2;
+    const isMaximin = rowIndex === maximinIndex && isMin && showFinalChoice;
+    const isCurrentRow = animatingRow === rowIndex;
+    const isScanning = isCurrentRow && scanningCol === colIndex;
+    const isFoundMin = isCurrentRow && scanningCol === -1 && isMin && !revealedRows.includes(rowIndex);
 
     if (step === 0) {
       return "bg-background";
     }
 
-    if (step === 1 && isMin) {
-      return "bg-amber-100 ring-2 ring-amber-500";
+    if (step === 1) {
+      // Currently scanning this cell
+      if (isScanning) {
+        return "bg-amber-100";
+      }
+      // Found the min, highlighting it before moving
+      if (isFoundMin) {
+        return "bg-red-200";
+      }
+      // Already revealed min
+      if (isMin && revealedRows.includes(rowIndex)) {
+        return "bg-red-100";
+      }
     }
 
-    if (step === 2) {
+    if (step >= 2) {
       if (isMaximin) {
-        return "bg-secondary/20 ring-2 ring-secondary animate-pulse";
+        return "bg-secondary/20";
       }
       if (isMin) {
-        return "bg-amber-100 ring-1 ring-amber-400";
+        return "bg-red-100";
       }
     }
 
@@ -71,35 +160,67 @@ const MaximinDemo = () => {
   };
 
   const getRowStyle = (rowIndex: number) => {
-    if (step === 2 && rowIndex === maximinIndex) {
+    if (showFinalChoice && rowIndex === maximinIndex) {
       return "bg-secondary/5";
     }
     return "";
   };
 
+  const getMinCellStyle = (rowIndex: number) => {
+    // Scanning animation in step 3
+    if (step === 3 && scanningMinCol === rowIndex) {
+      return "bg-amber-100";
+    }
+    // Highlight the max after scanning completes (step >= 3 and scanning done) or in step 4+
+    if (step === 3 && scanningMinCol === -1 && rowIndex === maximinIndex) {
+      return "bg-secondary/20";
+    }
+    if (step >= 4 && rowIndex === maximinIndex) {
+      return "bg-secondary/20";
+    }
+    return "";
+  };
+
+  // Visual step mapping: steps 0,1 = "Step 1", steps 2,3 = "Step 2", step 4,5 = "Step 3"
+  const visualStep = step <= 1 ? 0 : step <= 3 ? 1 : 2;
+  const visualSteps = [
+    {
+      title: "Step 1: Find the Minimum Payoff for Each Alternative",
+      description: "For each row (alternative), identify the worst possible outcome — the lowest payoff that could happen if things go badly.",
+    },
+    {
+      title: "Step 2: Select the Maximum of the Min Payoffs",
+      description: "Look at the Min Payoff column and find the highest value among all the minimum payoffs.",
+    },
+    {
+      title: "Step 3: Make the Maximin Decision",
+      description: "The alternative with the highest minimum payoff is the Maximin choice. This is the pessimist's decision!",
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-4">
-        {steps.map((s, i) => (
+        {visualSteps.map((s, i) => (
           <div
             key={i}
             className={cn(
               "flex items-center gap-2",
-              i <= step ? "text-secondary" : "text-muted-foreground"
+              i <= visualStep || completed ? "text-secondary" : "text-muted-foreground"
             )}
           >
             <div
               className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all",
-                i < step ? "bg-secondary text-secondary-foreground border-secondary" :
-                i === step ? "border-secondary text-secondary" :
+                i < visualStep || (completed && i <= visualStep) ? "bg-secondary text-secondary-foreground border-secondary" :
+                i === visualStep ? "border-secondary text-secondary" :
                 "border-muted-foreground/30"
               )}
             >
               {i + 1}
             </div>
-            {i < steps.length - 1 && (
+            {i < visualSteps.length - 1 && (
               <ChevronRight className="w-4 h-4 text-muted-foreground" />
             )}
           </div>
@@ -109,14 +230,14 @@ const MaximinDemo = () => {
       {/* Current step info */}
       <div className="bg-card border border-border rounded-lg p-4">
         <h3 className="font-semibold text-lg flex items-center gap-2">
-          {step === 2 && <Shield className="w-5 h-5 text-secondary" />}
-          {steps[step].title}
+          {showFinalChoice && <Shield className="w-5 h-5 text-secondary" />}
+          {visualSteps[visualStep].title}
         </h3>
-        <p className="text-muted-foreground mt-1">{steps[step].description}</p>
+        <p className="text-muted-foreground mt-1">{visualSteps[visualStep].description}</p>
       </div>
 
       {/* Decision Matrix with highlighting */}
-      <div className="overflow-x-auto">
+      <div className="overflow-hidden">
         <Table className="border border-border rounded-lg">
           <TableHeader>
             <TableRow className="bg-muted/30">
@@ -128,14 +249,13 @@ const MaximinDemo = () => {
                   {state}
                 </TableHead>
               ))}
-              <TableHead
-                className={cn(
-                  "text-center font-bold border-l-2 border-secondary/50 bg-secondary/5",
-                  step >= 1 ? "opacity-100" : "opacity-30"
-                )}
-              >
-                Min Payoff
-              </TableHead>
+              {showMinColumn && (
+                <TableHead
+                  className="text-center font-bold border-l-2 border-secondary/50 bg-secondary/5 animate-in fade-in slide-in-from-right-4 duration-300"
+                >
+                  Min Payoff
+                </TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -148,30 +268,39 @@ const MaximinDemo = () => {
                   <TableCell
                     key={colIndex}
                     className={cn(
-                      "text-center transition-all duration-300",
+                      "text-center transition-colors duration-300",
                       getCellStyle(rowIndex, colIndex)
                     )}
                   >
-                    <span className={cn(
-                      "text-lg font-medium",
-                      payoff >= 100 ? "text-green-600" : payoff >= 0 ? "text-foreground" : "text-red-500"
-                    )}>
+                    <span className="text-lg font-medium">
                       ${payoff}k
                     </span>
                   </TableCell>
                 ))}
-                <TableCell
-                  className={cn(
-                    "text-center border-l-2 border-secondary/50 font-bold transition-all duration-300",
-                    step >= 1 ? "opacity-100" : "opacity-30",
-                    step === 2 && rowIndex === maximinIndex && "bg-secondary/20 text-secondary"
-                  )}
-                >
-                  ${minPayoffs[rowIndex]}k
-                  {step === 2 && rowIndex === maximinIndex && (
-                    <span className="ml-2 text-xs">← Best!</span>
-                  )}
-                </TableCell>
+                {showMinColumn && (
+                  <TableCell
+                    className={cn(
+                      "text-center border-l-2 border-secondary/50 font-bold transition-colors duration-300",
+                      getMinCellStyle(rowIndex)
+                    )}
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <span
+                        className={cn(
+                          "text-red-600 transition-opacity duration-500",
+                          revealedRows.includes(rowIndex)
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      >
+                        ${minPayoffs[rowIndex]}k
+                      </span>
+                      {showFinalChoice && rowIndex === maximinIndex && (
+                        <span className="text-xs text-secondary">← Best!</span>
+                      )}
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>
@@ -179,7 +308,7 @@ const MaximinDemo = () => {
       </div>
 
       {/* Result box */}
-      {step === 2 && (
+      {showFinalChoice && (
         <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-4 animate-in fade-in slide-in-from-bottom-2">
           <p className="font-semibold text-secondary">
             Maximin Decision: {alternatives[maximinIndex]}
@@ -196,19 +325,22 @@ const MaximinDemo = () => {
       <div className="flex gap-2">
         <Button
           variant="outline"
-          onClick={() => setStep(0)}
-          disabled={step === 0}
+          onClick={() => {
+            setStep(0);
+            setCompleted(false);
+          }}
+          disabled={step === 0 && !completed}
           className="gap-2"
         >
           <RotateCcw className="w-4 h-4" />
           Reset
         </Button>
         <Button
-          onClick={() => setStep(Math.min(step + 1, steps.length - 1))}
-          disabled={step === steps.length - 1}
+          onClick={() => setStep(step + 1)}
+          disabled={completed || step === 5}
           className="gap-2"
         >
-          Next Step
+          {completed ? "Completed" : step === 0 || step === 2 || step === 4 ? "Reveal" : "Next Step"}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
