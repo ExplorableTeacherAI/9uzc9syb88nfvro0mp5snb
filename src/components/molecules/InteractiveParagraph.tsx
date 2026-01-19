@@ -50,7 +50,7 @@ export const InteractiveParagraph = ({
     return (
         <p
             ref={contentRef}
-            className={`text-base leading-relaxed ${enableMath ? "mathjax-process" : ""} ${className}`}
+            className={`text-base leading-relaxed ${enableMath ? "mathjax-process" : "no-mathjax"} ${className}`}
         >
             {children}
         </p>

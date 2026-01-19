@@ -45,7 +45,7 @@ export const Heading = ({
         6: "text-base font-semibold mb-2"
     };
 
-    const classes = `${levelStyles[level]} ${enableMath ? "mathjax-process" : ""} ${className}`.trim();
+    const classes = `${levelStyles[level]} ${enableMath ? "mathjax-process" : "no-mathjax"} ${className}`.trim();
 
     // If children is a string, sanitize it
     if (typeof children === "string") {
