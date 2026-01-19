@@ -568,8 +568,7 @@ export const MinimaxRegretSection = () => {
         <InteractiveParagraph>
           <Hoverable tooltip="The difference between what you actually got and what you could have gotten if you had made the best choice for that particular outcome.">
             Regret
-          </Hoverable>{" "}
-          (also called opportunity cost) measures the "what if" feeling — how much better off you
+          </Hoverable> (also called opportunity cost) measures the "what if" feeling — how much better off you
           could have been if you had made a different choice, given what actually happened.
         </InteractiveParagraph>
         <InteractiveParagraph>
