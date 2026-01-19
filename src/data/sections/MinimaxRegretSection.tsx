@@ -570,10 +570,7 @@ export const MinimaxRegretSection = () => {
           <Hoverable tooltip="The difference between what you actually got and what you could have gotten if you had made the best choice for that particular outcome.">
             regret
           </Hoverable>{" "}
-          means in decision theory. Regret (also called opportunity cost) measures the "what if" feeling — it's the gap between what you actually got and what you could have gotten if you had made the best choice for that particular outcome.
-        </InteractiveParagraph>
-        <InteractiveParagraph>
-          Here's a concrete example: suppose you chose Product B and the market turned out to have high demand. You'd earn <strong>$150k</strong>. But looking back, if you had chosen Product A instead, you would have earned <strong>$200k</strong>. That difference — <strong>$200k − $150k = $50k</strong> — is your regret. It's not a loss in the traditional sense, but it represents the missed opportunity you'll think about every time you wonder "what if?"
+          means in decision theory. Regret (also called opportunity cost) measures the "what if" feeling — it's the gap between what you actually got and what you could have gotten if you had made the best choice for that particular outcome. Here's a concrete example: suppose you chose Product B and the market turned out to have high demand. You'd earn <strong>$150k</strong>. But looking back, if you had chosen Product A instead, you would have earned <strong>$200k</strong>. That difference — <strong>$200k − $150k = $50k</strong> — is your regret. It's not a loss in the traditional sense, but it represents the missed opportunity you'll think about every time you wonder "what if?"
         </InteractiveParagraph>
       </Section>
 

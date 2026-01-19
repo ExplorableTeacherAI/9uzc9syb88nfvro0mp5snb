@@ -228,10 +228,7 @@ export const IntroductionSection = () => {
           Looking at the matrix above, which product would you launch? This is where decision-making gets interesting. Product A could give you the highest profit of{" "}
           <strong>$200k</strong>, but it could also result in a loss of{" "}
           <strong>−$50k</strong>. On the other hand, Product C guarantees{" "}
-          <strong>$80k</strong> regardless of what happens — but you might be leaving money on the table if the market turns out to be favorable.
-        </InteractiveParagraph>
-        <InteractiveParagraph enableMath={false}>
-          There's no single "correct" answer here — different decision criteria lead to different choices depending on your personality and risk tolerance. In the following sections, we'll explore three popular approaches:{" "}
+          <strong>$80k</strong> regardless of what happens — but you might be leaving money on the table if the market turns out to be favorable. There's no single "correct" answer here — different decision criteria lead to different choices depending on your personality and risk tolerance. In the following sections, we'll explore three popular approaches:{" "}
           <Hoverable tooltip="Choose the alternative with the best possible outcome (optimistic approach).">
             Maximax
           </Hoverable>{" "}
