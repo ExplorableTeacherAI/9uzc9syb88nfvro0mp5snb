@@ -6,7 +6,7 @@ import { Hoverable } from "@/components/annotations/Hoverable";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/atoms/ui/table";
 import { Button } from "@/components/atoms/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronRight, RotateCcw, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
 
 /**
  * Interactive Minimax Regret Demonstration
@@ -133,9 +133,6 @@ const MinimaxRegretDemo = () => {
           }
         }
         setCalculatingRegretCell(null);
-        // After all cells calculated, show regret matrix
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setShowRegretMatrix(true);
       };
 
       animateRegretCalculation();
@@ -263,8 +260,13 @@ const MinimaxRegretDemo = () => {
       }
       if (isRegretRevealed) {
         // Show regret value
-        return <span className="text-lg font-bold text-green-600">{regret}</span>;
+        return <span className="text-lg font-medium">{regret}</span>;
       }
+    }
+
+    // After step 3: show regret values
+    if (step >= 4) {
+      return <span className="text-lg font-medium">{regret}</span>;
     }
 
     // Default: show payoff
@@ -394,6 +396,8 @@ const MinimaxRegretDemo = () => {
           <h4 className="font-medium mb-2 text-sm text-muted-foreground">
             {step === 3 && revealedRegretCells.length > 0
               ? "Calculating Regret Values..."
+              : step >= 4
+              ? "Regret Matrix"
               : "Payoff Matrix"}
           </h4>
           <div className="overflow-hidden">
@@ -404,27 +408,57 @@ const MinimaxRegretDemo = () => {
                   {statesOfNature.map((state) => (
                     <TableHead key={state} className="text-center font-semibold">{state}</TableHead>
                   ))}
+                  {showMaxRegretColumn && (
+                    <TableHead
+                      className="text-center font-bold border-l-2 border-primary/50 bg-primary/5 animate-in fade-in slide-in-from-right-4 duration-300"
+                    >
+                      Max Regret
+                    </TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {alternatives.map((alt, rowIndex) => (
-                  <TableRow key={alt}>
+                  <TableRow key={alt} className={getRowStyle(rowIndex)}>
                     <TableCell className="font-medium border-r border-border">{alt}</TableCell>
                     {payoffs[rowIndex].map((payoff, colIndex) => (
                       <TableCell
                         key={colIndex}
                         className={cn(
                           "text-center transition-colors duration-300",
-                          getPayoffCellStyle(rowIndex, colIndex)
+                          getPayoffCellStyle(rowIndex, colIndex),
+                          step >= 5 && getRegretCellStyle(rowIndex, colIndex)
                         )}
                       >
                         {getPayoffCellContent(rowIndex, colIndex)}
                       </TableCell>
                     ))}
+                    {showMaxRegretColumn && (
+                      <TableCell
+                        className={cn(
+                          "text-center border-l-2 border-primary/50 font-bold transition-colors duration-300",
+                          getMaxRegretCellStyle(rowIndex)
+                        )}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          <span
+                            className={cn(
+                              "text-green-600 transition-opacity duration-500",
+                              revealedMaxRegretRows.includes(rowIndex) ? "opacity-100" : "opacity-0"
+                            )}
+                          >
+                            {maxRegrets[rowIndex]}
+                          </span>
+                          {showFinalChoice && rowIndex === minimaxIndex && (
+                            <span className="text-xs text-primary">← Min!</span>
+                          )}
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
                 {/* Best in column row */}
-                {showBestRow && (
+                {showBestRow && step < 4 && (
                   <TableRow className="bg-primary/5 border-t-2 border-primary/50">
                     <TableCell className="font-bold text-primary border-r border-border">
                       Best in Column
@@ -448,80 +482,6 @@ const MinimaxRegretDemo = () => {
           </div>
         </div>
 
-        {/* Arrow transition */}
-        {showRegretMatrix && (
-          <div className="flex justify-center animate-in fade-in">
-            <ArrowRight className="w-8 h-8 text-muted-foreground rotate-90" />
-          </div>
-        )}
-
-        {/* Regret Matrix */}
-        {showRegretMatrix && (
-          <div className="animate-in fade-in slide-in-from-top-4">
-            <h4 className="font-medium mb-2 text-sm text-muted-foreground">
-              Regret Matrix <span className="text-xs">(Best - Actual = Opportunity Cost)</span>
-            </h4>
-            <div className="overflow-hidden">
-              <Table className="border border-border rounded-lg">
-                <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead className="font-bold text-foreground border-r border-border">Alternatives</TableHead>
-                    {statesOfNature.map((state) => (
-                      <TableHead key={state} className="text-center font-semibold">{state}</TableHead>
-                    ))}
-                    {showMaxRegretColumn && (
-                      <TableHead
-                        className="text-center font-bold border-l-2 border-primary/50 bg-primary/5 animate-in fade-in slide-in-from-right-4 duration-300"
-                      >
-                        Max Regret
-                      </TableHead>
-                    )}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {alternatives.map((alt, rowIndex) => (
-                    <TableRow key={alt} className={getRowStyle(rowIndex)}>
-                      <TableCell className="font-medium border-r border-border">{alt}</TableCell>
-                      {regretMatrix[rowIndex].map((regret, colIndex) => (
-                        <TableCell
-                          key={colIndex}
-                          className={cn(
-                            "text-center transition-colors duration-300",
-                            getRegretCellStyle(rowIndex, colIndex)
-                          )}
-                        >
-                          <span className="text-lg font-medium">{regret}</span>
-                        </TableCell>
-                      ))}
-                      {showMaxRegretColumn && (
-                        <TableCell
-                          className={cn(
-                            "text-center border-l-2 border-primary/50 font-bold transition-colors duration-300",
-                            getMaxRegretCellStyle(rowIndex)
-                          )}
-                        >
-                          <div className="flex items-center justify-center gap-1">
-                            <span
-                              className={cn(
-                                "text-green-600 transition-opacity duration-500",
-                                revealedMaxRegretRows.includes(rowIndex) ? "opacity-100" : "opacity-0"
-                              )}
-                            >
-                              {maxRegrets[rowIndex]}
-                            </span>
-                            {showFinalChoice && rowIndex === minimaxIndex && (
-                              <span className="text-xs text-primary">← Min!</span>
-                            )}
-                          </div>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Result box */}
