@@ -106,7 +106,7 @@ const MinimaxRegretDemo = () => {
       setShowFinalChoice(false);
       setRevealedRegretCells([]);
     } else if (step === 3) {
-      // Step 2 reveal: Animate regret calculation cell by cell
+      // Step 2 reveal: Animate regret calculation column by column
       setRevealedBestCols([0, 1, 2]);
       setShowRegretMatrix(false);
       setShowMaxRegretColumn(false);
@@ -115,8 +115,9 @@ const MinimaxRegretDemo = () => {
       setRevealedRegretCells([]);
 
       const animateRegretCalculation = async () => {
-        for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
-          for (let colIdx = 0; colIdx < statesOfNature.length; colIdx++) {
+        // Go column by column
+        for (let colIdx = 0; colIdx < statesOfNature.length; colIdx++) {
+          for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
             // Highlight current cell
             setCalculatingRegretCell({ row: rowIdx, col: colIdx });
             await new Promise(resolve => setTimeout(resolve, 400));
@@ -216,8 +217,6 @@ const MinimaxRegretDemo = () => {
     const isBestInColumn = payoffs[rowIndex][colIndex] === bestInColumn[colIndex];
     const isScanning = scanningCol === colIndex && scanningRow === rowIndex;
     const isFoundBest = scanningCol === colIndex && scanningRow === -1 && isBestInColumn && !revealedBestCols.includes(colIndex);
-    const isCalculating = calculatingRegretCell?.row === rowIndex && calculatingRegretCell?.col === colIndex;
-    const isRegretRevealed = revealedRegretCells.includes(`${rowIndex}-${colIndex}`);
 
     if (step === 0) {
       return "bg-background";
@@ -235,28 +234,9 @@ const MinimaxRegretDemo = () => {
       }
     }
 
-    // Step 3: Regret calculation animation
-    if (step === 3) {
-      if (isCalculating) {
-        return "bg-amber-100";
-      }
-      if (isRegretRevealed) {
-        return "bg-green-100";
-      }
-      if (isBestInColumn) {
-        return "bg-green-100";
-      }
-    }
-
-    if (step >= 2 && step !== 3 && isBestInColumn) {
+    // Step 2 and 3: Keep best in column highlighted
+    if (step >= 2 && isBestInColumn) {
       return "bg-green-100";
-    }
-
-    // After step 3 with revealed regrets
-    if (step >= 4) {
-      if (isBestInColumn) {
-        return "bg-green-100";
-      }
     }
 
     return "bg-background";
