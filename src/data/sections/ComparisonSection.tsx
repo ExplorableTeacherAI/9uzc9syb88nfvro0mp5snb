@@ -369,27 +369,6 @@ export const ComparisonSection = () => {
         </div>
       </Section>
 
-      <Section id="comparison-conclusion" padding="lg">
-        <Heading level={2}>Key Takeaways</Heading>
-        <div className="bg-card border border-border rounded-lg p-6 mt-4 space-y-3">
-          <p className="flex items-start gap-2">
-            <span className="text-primary font-bold">1.</span>
-            <span>Decision-making under uncertainty requires choosing a strategy that matches your values and risk tolerance.</span>
-          </p>
-          <p className="flex items-start gap-2">
-            <span className="text-primary font-bold">2.</span>
-            <span>The same data can lead to different "rational" decisions depending on which criterion you apply.</span>
-          </p>
-          <p className="flex items-start gap-2">
-            <span className="text-primary font-bold">3.</span>
-            <span>None of these criteria use probability — they're designed for situations where you truly don't know what will happen.</span>
-          </p>
-          <p className="flex items-start gap-2">
-            <span className="text-primary font-bold">4.</span>
-            <span>Understanding all three approaches helps you make more thoughtful decisions and understand why others might choose differently.</span>
-          </p>
-        </div>
-      </Section>
     </>
   );
 };
