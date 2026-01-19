@@ -58,14 +58,14 @@ const MaximaxDemo = () => {
           // Scan through each column in the row
           for (let colIdx = 0; colIdx < statesOfNature.length; colIdx++) {
             setScanningCol(colIdx);
-            await new Promise(resolve => setTimeout(resolve, 300));
+            await new Promise(resolve => setTimeout(resolve, 500));
           }
 
           // Highlight the max and move to column
           setScanningCol(-1);
-          await new Promise(resolve => setTimeout(resolve, 400));
+          await new Promise(resolve => setTimeout(resolve, 600));
           setRevealedRows(prev => [...prev, rowIdx]);
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise(resolve => setTimeout(resolve, 500));
         }
         setAnimatingRow(-1);
       };
@@ -88,10 +88,10 @@ const MaximaxDemo = () => {
       const animateMaxColumn = async () => {
         for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
           setScanningMaxCol(rowIdx);
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 700));
         }
         setScanningMaxCol(-1);
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 500));
         setShowFinalChoice(true);
       };
 
@@ -212,7 +212,7 @@ const MaximaxDemo = () => {
       </div>
 
       {/* Decision Matrix with highlighting */}
-      <div className="overflow-x-auto">
+      <div className="overflow-hidden">
         <Table className="border border-border rounded-lg">
           <TableHeader>
             <TableRow className="bg-muted/30">
