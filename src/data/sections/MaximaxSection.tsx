@@ -79,7 +79,7 @@ const MaximaxDemo = () => {
       setScanningMaxCol(-1);
       setShowFinalChoice(false);
     } else if (step === 3) {
-      // Step 2 reveal: Animate scanning through max column
+      // Step 2 reveal: Animate scanning through max column and highlight the max
       setRevealedRows([0, 1, 2]);
       setScanningCol(-1);
       setAnimatingRow(-1);
@@ -90,20 +90,13 @@ const MaximaxDemo = () => {
           setScanningMaxCol(rowIdx);
           await new Promise(resolve => setTimeout(resolve, 700));
         }
+        // Keep the max highlighted after scanning
         setScanningMaxCol(-1);
-        await new Promise(resolve => setTimeout(resolve, 500));
       };
 
       animateMaxColumn();
     } else if (step === 4) {
-      // Step 3 instruction: Show instruction for final decision
-      setRevealedRows([0, 1, 2]);
-      setScanningCol(-1);
-      setAnimatingRow(-1);
-      setScanningMaxCol(-1);
-      setShowFinalChoice(false);
-    } else if (step === 5) {
-      // Step 3 reveal: Show the final decision
+      // Step 3: Show the final decision
       setRevealedRows([0, 1, 2]);
       setScanningCol(-1);
       setAnimatingRow(-1);
@@ -152,7 +145,7 @@ const MaximaxDemo = () => {
   };
 
   const getRowStyle = (rowIndex: number) => {
-    if ((step >= 4 || showFinalChoice) && rowIndex === maximaxIndex) {
+    if (showFinalChoice && rowIndex === maximaxIndex) {
       return "bg-primary/5";
     }
     return "";
@@ -163,14 +156,17 @@ const MaximaxDemo = () => {
     if (step === 3 && scanningMaxCol === rowIndex) {
       return "bg-amber-100";
     }
-    // Highlight the max after scanning completes (step >= 4) or when final choice shown
-    if ((step >= 4 || showFinalChoice) && rowIndex === maximaxIndex) {
+    // Highlight the max after scanning completes (step >= 3 and scanning done) or in step 4
+    if (step === 3 && scanningMaxCol === -1 && rowIndex === maximaxIndex) {
+      return "bg-primary/20";
+    }
+    if (step === 4 && rowIndex === maximaxIndex) {
       return "bg-primary/20";
     }
     return "";
   };
 
-  // Visual step mapping: steps 0,1 = "Step 1", steps 2,3 = "Step 2", steps 4,5 = "Step 3"
+  // Visual step mapping: steps 0,1 = "Step 1", steps 2,3 = "Step 2", step 4 = "Step 3"
   const visualStep = step <= 1 ? 0 : step <= 3 ? 1 : 2;
   const visualSteps = [
     {
@@ -325,7 +321,7 @@ const MaximaxDemo = () => {
         </Button>
         <Button
           onClick={() => {
-            if (step === 5) {
+            if (step === 4) {
               setCompleted(true);
             } else {
               setStep(step + 1);
@@ -334,7 +330,7 @@ const MaximaxDemo = () => {
           disabled={completed}
           className="gap-2"
         >
-          {step === 0 || step === 2 || step === 4 ? "Reveal" : step === 5 ? "Complete" : "Next Step"}
+          {step === 0 || step === 2 ? "Reveal" : step === 4 ? "Complete" : "Next Step"}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
