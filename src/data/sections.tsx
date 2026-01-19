@@ -1,6 +1,7 @@
 import { type ReactElement } from "react";
 import { FullWidthLayout } from "@/components/layouts";
 import { IntroductionSection } from "./sections/IntroductionSection";
+import { MaximaxSection } from "./sections/MaximaxSection";
 
 /**
  * ------------------------------------------------------------------
@@ -20,5 +21,10 @@ export const sections: ReactElement[] = [
     // Section 1: Introduction to Decision Theory
     <FullWidthLayout key="introduction" maxWidth="xl">
         <IntroductionSection />
+    </FullWidthLayout>,
+
+    // Section 2: Maximax Criterion
+    <FullWidthLayout key="maximax" maxWidth="xl">
+        <MaximaxSection />
     </FullWidthLayout>,
 ];
