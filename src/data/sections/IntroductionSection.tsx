@@ -224,8 +224,8 @@ export const IntroductionSection = () => {
 
       <Section id="intro-challenge" padding="md">
         <Heading level={2}>The Challenge: Which Alternative Should You Choose?</Heading>
-        <InteractiveParagraph enableMath={false}>
-          Looking at the matrix above, which product would you launch? Product A could give you the highest profit ($200k), but it could also result in a loss (−$50k). Product C guarantees $80k regardless of what happens, but you might be leaving money on the table.
+        <InteractiveParagraph>
+          Looking at the matrix above, which product would you launch? Product A could give you the highest profit ($200k), but it could also result in a loss (-$50k). Product C guarantees $80k regardless of what happens, but you might be leaving money on the table.
         </InteractiveParagraph>
         <InteractiveParagraph>
           Different decision criteria lead to different choices. In the following sections, we'll
