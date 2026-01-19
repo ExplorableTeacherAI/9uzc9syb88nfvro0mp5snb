@@ -27,7 +27,7 @@ const MinimaxRegretDemo = () => {
   const [showFinalChoice, setShowFinalChoice] = useState(false);
   // New state for regret calculation animation
   const [calculatingRegretCell, setCalculatingRegretCell] = useState<{row: number, col: number} | null>(null);
-  const [showCalculation, setShowCalculation] = useState(false);
+  const [calculationPhase, setCalculationPhase] = useState<'none' | 'best' | 'minus' | 'payoff' | 'equals' | 'result'>('none');
   const [revealedRegretCells, setRevealedRegretCells] = useState<string[]>([]);
 
   const alternatives = ["Product A", "Product B", "Product C"];
@@ -70,7 +70,7 @@ const MinimaxRegretDemo = () => {
       setScanningMaxRegretRow(-1);
       setShowFinalChoice(false);
       setCalculatingRegretCell(null);
-      setShowCalculation(false);
+      setCalculationPhase('none');
       setRevealedRegretCells([]);
     } else if (step === 1) {
       // Step 1 reveal: Animate finding best in each column
@@ -120,16 +120,33 @@ const MinimaxRegretDemo = () => {
           for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
             // Highlight current cell
             setCalculatingRegretCell({ row: rowIdx, col: colIdx });
+            setCalculationPhase('none');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Typing effect: show best value
+            setCalculationPhase('best');
             await new Promise(resolve => setTimeout(resolve, 400));
 
-            // Show calculation formula
-            setShowCalculation(true);
+            // Typing effect: show minus
+            setCalculationPhase('minus');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Typing effect: show payoff
+            setCalculationPhase('payoff');
+            await new Promise(resolve => setTimeout(resolve, 400));
+
+            // Typing effect: show equals
+            setCalculationPhase('equals');
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            // Typing effect: show result
+            setCalculationPhase('result');
             await new Promise(resolve => setTimeout(resolve, 600));
 
             // Reveal the regret value
             setRevealedRegretCells(prev => [...prev, `${rowIdx}-${colIdx}`]);
-            setShowCalculation(false);
-            await new Promise(resolve => setTimeout(resolve, 300));
+            setCalculationPhase('none');
+            await new Promise(resolve => setTimeout(resolve, 200));
           }
         }
         setCalculatingRegretCell(null);
@@ -249,12 +266,20 @@ const MinimaxRegretDemo = () => {
 
     // During step 3 animation
     if (step === 3) {
-      if (isCalculating && showCalculation) {
-        // Show the calculation formula
+      if (isCalculating && calculationPhase !== 'none') {
+        // Show the typing calculation formula
         return (
-          <div className="flex flex-col items-center">
-            <span className="text-xs text-muted-foreground">{best} - {payoff}</span>
-            <span className="text-lg font-bold text-green-600">= {regret}</span>
+          <div className="flex flex-col items-center min-h-[48px] justify-center">
+            <span className="text-sm text-muted-foreground font-mono">
+              {calculationPhase === 'best' && <>{best}<span className="animate-pulse">|</span></>}
+              {calculationPhase === 'minus' && <>{best} -<span className="animate-pulse">|</span></>}
+              {calculationPhase === 'payoff' && <>{best} - {payoff}<span className="animate-pulse">|</span></>}
+              {calculationPhase === 'equals' && <>{best} - {payoff} =<span className="animate-pulse">|</span></>}
+              {calculationPhase === 'result' && <>{best} - {payoff} =</>}
+            </span>
+            {calculationPhase === 'result' && (
+              <span className="text-lg font-bold text-green-600 animate-in fade-in">{regret}</span>
+            )}
           </div>
         );
       }
