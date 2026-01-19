@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Section } from "@/components/templates";
 import { Heading } from "@/components/molecules/Heading";
 import { InteractiveParagraph } from "@/components/molecules/InteractiveParagraph";
@@ -6,7 +6,7 @@ import { Hoverable } from "@/components/annotations/Hoverable";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/atoms/ui/table";
 import { Button } from "@/components/atoms/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
+import { ChevronRight, RotateCcw, Sparkles, ArrowRight } from "lucide-react";
 
 /**
  * Interactive Maximax Demonstration
@@ -14,6 +14,9 @@ import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
 const MaximaxDemo = () => {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [animatingRow, setAnimatingRow] = useState(-1);
+  const [showMaxColumn, setShowMaxColumn] = useState(false);
+  const [revealedRows, setRevealedRows] = useState<number[]>([]);
 
   const alternatives = ["Launch Product A", "Launch Product B", "Launch Product C"];
   const statesOfNature = ["High Demand", "Medium Demand", "Low Demand"];
@@ -27,6 +30,33 @@ const MaximaxDemo = () => {
   const maxPayoffs = payoffs.map(row => Math.max(...row));
   // Index of the best maximum (Maximax choice)
   const maximaxIndex = maxPayoffs.indexOf(Math.max(...maxPayoffs));
+
+  // Animation effect when entering step 1
+  useEffect(() => {
+    if (step === 1) {
+      setShowMaxColumn(true);
+      setRevealedRows([]);
+
+      // Animate each row sequentially
+      const animateRows = async () => {
+        for (let i = 0; i < alternatives.length; i++) {
+          setAnimatingRow(i);
+          await new Promise(resolve => setTimeout(resolve, 600));
+          setRevealedRows(prev => [...prev, i]);
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        setAnimatingRow(-1);
+      };
+
+      animateRows();
+    } else if (step === 0) {
+      setShowMaxColumn(false);
+      setRevealedRows([]);
+      setAnimatingRow(-1);
+    } else if (step === 2) {
+      setRevealedRows([0, 1, 2]);
+    }
+  }, [step, alternatives.length]);
 
   const steps = [
     {
@@ -50,13 +80,19 @@ const MaximaxDemo = () => {
     const value = payoffs[rowIndex][colIndex];
     const isMax = value === maxPayoffs[rowIndex];
     const isMaximax = rowIndex === maximaxIndex && isMax && step >= 2;
+    const isAnimating = animatingRow === rowIndex && isMax;
 
     if (step === 0) {
       return "bg-background";
     }
 
-    if (step === 1 && isMax) {
-      return "bg-green-100";
+    if (step === 1) {
+      if (isAnimating) {
+        return "bg-green-200 scale-110 shadow-lg z-10";
+      }
+      if (isMax && revealedRows.includes(rowIndex)) {
+        return "bg-green-100";
+      }
     }
 
     if (step === 2) {
@@ -129,9 +165,9 @@ const MaximaxDemo = () => {
                   {state}
                 </TableHead>
               ))}
-              {step >= 1 && (
+              {showMaxColumn && (
                 <TableHead
-                  className="text-center font-bold border-l-2 border-primary/50 bg-primary/5"
+                  className="text-center font-bold border-l-2 border-primary/50 bg-primary/5 animate-in fade-in slide-in-from-right-4 duration-300"
                 >
                   Max Payoff
                 </TableHead>
@@ -160,17 +196,31 @@ const MaximaxDemo = () => {
                     </span>
                   </TableCell>
                 ))}
-                {step >= 1 && (
+                {showMaxColumn && (
                   <TableCell
                     className={cn(
                       "text-center border-l-2 border-primary/50 font-bold transition-all duration-300",
                       step === 2 && rowIndex === maximaxIndex && "bg-primary/20 text-primary"
                     )}
                   >
-                    ${maxPayoffs[rowIndex]}k
-                    {step === 2 && rowIndex === maximaxIndex && (
-                      <span className="ml-2 text-xs">← Best!</span>
-                    )}
+                    <div className="flex items-center justify-center gap-2">
+                      {animatingRow === rowIndex && (
+                        <ArrowRight className="w-4 h-4 text-green-600 animate-pulse" />
+                      )}
+                      <span
+                        className={cn(
+                          "transition-all duration-300",
+                          revealedRows.includes(rowIndex)
+                            ? "opacity-100 translate-x-0"
+                            : "opacity-0 -translate-x-4"
+                        )}
+                      >
+                        ${maxPayoffs[rowIndex]}k
+                      </span>
+                      {step === 2 && rowIndex === maximaxIndex && (
+                        <span className="text-xs">← Best!</span>
+                      )}
+                    </div>
                   </TableCell>
                 )}
               </TableRow>
