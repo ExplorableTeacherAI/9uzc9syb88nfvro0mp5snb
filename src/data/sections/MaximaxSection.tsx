@@ -34,14 +34,20 @@ const MaximaxDemo = () => {
   // Find column index of max value in each row
   const maxColIndices = payoffs.map(row => row.indexOf(Math.max(...row)));
 
-  // Animation effect when entering step 0 (finding max for each row)
+  // Animation effect based on step
   useEffect(() => {
     if (step === 0) {
+      // Step 1: Show original table only
+      setShowMaxColumn(false);
+      setRevealedRows([]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+    } else if (step === 1) {
+      // Step 2: Animate finding max for each row
       setShowMaxColumn(true);
       setRevealedRows([]);
       setScanningCol(-1);
 
-      // Animate each row sequentially with column scanning
       const animateRows = async () => {
         for (let rowIdx = 0; rowIdx < alternatives.length; rowIdx++) {
           setAnimatingRow(rowIdx);
@@ -62,7 +68,8 @@ const MaximaxDemo = () => {
       };
 
       animateRows();
-    } else if (step === 1) {
+    } else if (step === 2) {
+      // Step 3: Show final decision
       setRevealedRows([0, 1, 2]);
       setScanningCol(-1);
       setAnimatingRow(-1);
@@ -71,12 +78,17 @@ const MaximaxDemo = () => {
 
   const steps = [
     {
-      title: "Step 1: Find the Maximum Payoff for Each Alternative",
+      title: "Step 1: Examine the Decision Matrix",
+      description: "We start with our payoff table showing all possible outcomes for each alternative under different states of nature.",
+      highlight: "none",
+    },
+    {
+      title: "Step 2: Find the Maximum Payoff for Each Alternative",
       description: "For each row (alternative), identify the best possible outcome — the highest payoff you could achieve if the most favorable state occurs.",
       highlight: "maxInRow",
     },
     {
-      title: "Step 2: Choose the Maximum of the Maximums",
+      title: "Step 3: Choose the Maximum of the Maximums",
       description: "Compare all the maximum payoffs and select the alternative with the highest one. This is the Maximax decision!",
       highlight: "maximax",
     },
@@ -85,12 +97,16 @@ const MaximaxDemo = () => {
   const getCellStyle = (rowIndex: number, colIndex: number) => {
     const value = payoffs[rowIndex][colIndex];
     const isMax = value === maxPayoffs[rowIndex];
-    const isMaximax = rowIndex === maximaxIndex && isMax && step === 1;
+    const isMaximax = rowIndex === maximaxIndex && isMax && step === 2;
     const isCurrentRow = animatingRow === rowIndex;
     const isScanning = isCurrentRow && scanningCol === colIndex;
     const isFoundMax = isCurrentRow && scanningCol === -1 && isMax && !revealedRows.includes(rowIndex);
 
     if (step === 0) {
+      return "bg-background";
+    }
+
+    if (step === 1) {
       // Currently scanning this cell
       if (isScanning) {
         return "bg-amber-100";
@@ -105,7 +121,7 @@ const MaximaxDemo = () => {
       }
     }
 
-    if (step === 1) {
+    if (step === 2) {
       if (isMaximax) {
         return "bg-primary/20";
       }
@@ -118,7 +134,7 @@ const MaximaxDemo = () => {
   };
 
   const getRowStyle = (rowIndex: number) => {
-    if (step === 1 && rowIndex === maximaxIndex) {
+    if (step === 2 && rowIndex === maximaxIndex) {
       return "bg-primary/5";
     }
     return "";
@@ -156,7 +172,7 @@ const MaximaxDemo = () => {
       {/* Current step info */}
       <div className="bg-card border border-border rounded-lg p-4">
         <h3 className="font-semibold text-lg flex items-center gap-2">
-          {step === 1 && <Sparkles className="w-5 h-5 text-primary" />}
+          {step === 2 && <Sparkles className="w-5 h-5 text-primary" />}
           {steps[step].title}
         </h3>
         <p className="text-muted-foreground mt-1">{steps[step].description}</p>
@@ -207,7 +223,7 @@ const MaximaxDemo = () => {
                   <TableCell
                     className={cn(
                       "text-center border-l-2 border-primary/50 font-bold transition-colors duration-300",
-                      step === 1 && rowIndex === maximaxIndex && "bg-primary/20"
+                      step === 2 && rowIndex === maximaxIndex && "bg-primary/20"
                     )}
                   >
                     <div className="flex items-center justify-center gap-1">
@@ -221,7 +237,7 @@ const MaximaxDemo = () => {
                       >
                         ${maxPayoffs[rowIndex]}k
                       </span>
-                      {step === 1 && rowIndex === maximaxIndex && (
+                      {step === 2 && rowIndex === maximaxIndex && (
                         <span className="text-xs text-primary">← Best!</span>
                       )}
                     </div>
@@ -234,7 +250,7 @@ const MaximaxDemo = () => {
       </div>
 
       {/* Result box */}
-      {step === 1 && (
+      {step === 2 && (
         <div className="bg-primary/10 border border-primary/30 rounded-lg p-4 animate-in fade-in slide-in-from-bottom-2">
           <p className="font-semibold text-primary">
             Maximax Decision: {alternatives[maximaxIndex]}
