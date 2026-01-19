@@ -37,7 +37,7 @@ const MaximaxDemo = () => {
   // Animation effect based on step
   useEffect(() => {
     if (step === 0) {
-      // Step 1: Show instruction + original table
+      // Step 1 instruction: Show original table
       setShowMaxColumn(false);
       setRevealedRows([]);
       setScanningCol(-1);
@@ -45,7 +45,7 @@ const MaximaxDemo = () => {
       setScanningMaxCol(-1);
       setShowFinalChoice(false);
     } else if (step === 1) {
-      // Step 2: Animate finding max for each row
+      // Step 1 reveal: Animate finding max for each row
       setShowMaxColumn(true);
       setRevealedRows([]);
       setScanningCol(-1);
@@ -72,14 +72,14 @@ const MaximaxDemo = () => {
 
       animateRows();
     } else if (step === 2) {
-      // Step 3: Show instruction for choosing max of max
+      // Step 2 instruction: Show instruction for selecting max of max
       setRevealedRows([0, 1, 2]);
       setScanningCol(-1);
       setAnimatingRow(-1);
       setScanningMaxCol(-1);
       setShowFinalChoice(false);
     } else if (step === 3) {
-      // Step 4: Animate scanning through max column to find the best
+      // Step 2 reveal: Animate scanning through max column
       setRevealedRows([0, 1, 2]);
       setScanningCol(-1);
       setAnimatingRow(-1);
@@ -92,10 +92,23 @@ const MaximaxDemo = () => {
         }
         setScanningMaxCol(-1);
         await new Promise(resolve => setTimeout(resolve, 500));
-        setShowFinalChoice(true);
       };
 
       animateMaxColumn();
+    } else if (step === 4) {
+      // Step 3 instruction: Show instruction for final decision
+      setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setScanningMaxCol(-1);
+      setShowFinalChoice(false);
+    } else if (step === 5) {
+      // Step 3 reveal: Show the final decision
+      setRevealedRows([0, 1, 2]);
+      setScanningCol(-1);
+      setAnimatingRow(-1);
+      setScanningMaxCol(-1);
+      setShowFinalChoice(true);
     }
   }, [step, alternatives.length, statesOfNature.length]);
 
@@ -139,37 +152,38 @@ const MaximaxDemo = () => {
   };
 
   const getRowStyle = (rowIndex: number) => {
-    if (showFinalChoice && rowIndex === maximaxIndex) {
+    if ((step >= 4 || showFinalChoice) && rowIndex === maximaxIndex) {
       return "bg-primary/5";
     }
     return "";
   };
 
   const getMaxCellStyle = (rowIndex: number) => {
-    if (step === 3) {
-      if (scanningMaxCol === rowIndex) {
-        return "bg-amber-100";
-      }
-      if (showFinalChoice && rowIndex === maximaxIndex) {
-        return "bg-primary/20";
-      }
+    // Scanning animation in step 3
+    if (step === 3 && scanningMaxCol === rowIndex) {
+      return "bg-amber-100";
     }
-    if (showFinalChoice && rowIndex === maximaxIndex) {
+    // Highlight the max after scanning completes (step >= 4) or when final choice shown
+    if ((step >= 4 || showFinalChoice) && rowIndex === maximaxIndex) {
       return "bg-primary/20";
     }
     return "";
   };
 
-  // Visual step mapping: steps 0,1 = "Step 1", steps 2,3 = "Step 2"
-  const visualStep = step <= 1 ? 0 : 1;
+  // Visual step mapping: steps 0,1 = "Step 1", steps 2,3 = "Step 2", steps 4,5 = "Step 3"
+  const visualStep = step <= 1 ? 0 : step <= 3 ? 1 : 2;
   const visualSteps = [
     {
       title: "Step 1: Find the Maximum Payoff for Each Alternative",
       description: "For each row (alternative), identify the best possible outcome — the highest payoff you could achieve if the most favorable state occurs.",
     },
     {
-      title: "Step 2: Choose the Maximum of the Maximums",
-      description: "Compare all the maximum payoffs and select the alternative with the highest one. This is the Maximax decision!",
+      title: "Step 2: Select the Maximum of the Max Payoffs",
+      description: "Look at the Max Payoff column and find the highest value among all the maximum payoffs.",
+    },
+    {
+      title: "Step 3: Make the Maximax Decision",
+      description: "The alternative with the highest maximum payoff is the Maximax choice. This is the optimist's decision!",
     },
   ];
 
@@ -311,7 +325,7 @@ const MaximaxDemo = () => {
         </Button>
         <Button
           onClick={() => {
-            if (step === 3) {
+            if (step === 5) {
               setCompleted(true);
             } else {
               setStep(step + 1);
@@ -320,7 +334,7 @@ const MaximaxDemo = () => {
           disabled={completed}
           className="gap-2"
         >
-          {step === 0 || step === 2 ? "Reveal" : step === 3 ? "Complete" : "Next Step"}
+          {step === 0 || step === 2 || step === 4 ? "Reveal" : step === 5 ? "Complete" : "Next Step"}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
