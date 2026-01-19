@@ -6,7 +6,7 @@ import { Hoverable } from "@/components/annotations/Hoverable";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/atoms/ui/table";
 import { Button } from "@/components/atoms/ui/button";
 import { cn } from "@/lib/utils";
-import { ChevronRight, RotateCcw, Shield } from "lucide-react";
+import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
 
 /**
  * Interactive Maximin Demonstration
@@ -149,7 +149,7 @@ const MaximinDemo = () => {
 
     if (step >= 2) {
       if (isMaximin) {
-        return "bg-secondary/20";
+        return "bg-primary/20";
       }
       if (isMin) {
         return "bg-green-100";
@@ -161,7 +161,7 @@ const MaximinDemo = () => {
 
   const getRowStyle = (rowIndex: number) => {
     if (showFinalChoice && rowIndex === maximinIndex) {
-      return "bg-secondary/5";
+      return "bg-primary/5";
     }
     return "";
   };
@@ -173,10 +173,10 @@ const MaximinDemo = () => {
     }
     // Highlight the max after scanning completes (step >= 3 and scanning done) or in step 4+
     if (step === 3 && scanningMinCol === -1 && rowIndex === maximinIndex) {
-      return "bg-secondary/20";
+      return "bg-primary/20";
     }
     if (step >= 4 && rowIndex === maximinIndex) {
-      return "bg-secondary/20";
+      return "bg-primary/20";
     }
     return "";
   };
@@ -207,14 +207,14 @@ const MaximinDemo = () => {
             key={i}
             className={cn(
               "flex items-center gap-2",
-              i <= visualStep || completed ? "text-secondary" : "text-muted-foreground"
+              i <= visualStep || completed ? "text-primary" : "text-muted-foreground"
             )}
           >
             <div
               className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all",
-                i < visualStep || (completed && i <= visualStep) ? "bg-secondary text-secondary-foreground border-secondary" :
-                i === visualStep ? "border-secondary text-secondary" :
+                i < visualStep || (completed && i <= visualStep) ? "bg-primary text-primary-foreground border-primary" :
+                i === visualStep ? "border-primary text-primary" :
                 "border-muted-foreground/30"
               )}
             >
@@ -230,7 +230,7 @@ const MaximinDemo = () => {
       {/* Current step info */}
       <div className="bg-card border border-border rounded-lg p-4">
         <h3 className="font-semibold text-lg flex items-center gap-2">
-          {showFinalChoice && <Shield className="w-5 h-5 text-secondary" />}
+          {showFinalChoice && <Sparkles className="w-5 h-5 text-primary" />}
           {visualSteps[visualStep].title}
         </h3>
         <p className="text-muted-foreground mt-1">{visualSteps[visualStep].description}</p>
@@ -251,7 +251,7 @@ const MaximinDemo = () => {
               ))}
               {showMinColumn && (
                 <TableHead
-                  className="text-center font-bold border-l-2 border-secondary/50 bg-secondary/5 animate-in fade-in slide-in-from-right-4 duration-300"
+                  className="text-center font-bold border-l-2 border-primary/50 bg-primary/5 animate-in fade-in slide-in-from-right-4 duration-300"
                 >
                   Min Payoff
                 </TableHead>
@@ -280,7 +280,7 @@ const MaximinDemo = () => {
                 {showMinColumn && (
                   <TableCell
                     className={cn(
-                      "text-center border-l-2 border-secondary/50 font-bold transition-colors duration-300",
+                      "text-center border-l-2 border-primary/50 font-bold transition-colors duration-300",
                       getMinCellStyle(rowIndex)
                     )}
                   >
@@ -296,7 +296,7 @@ const MaximinDemo = () => {
                         ${minPayoffs[rowIndex]}k
                       </span>
                       {showFinalChoice && rowIndex === maximinIndex && (
-                        <span className="text-xs text-secondary">← Best!</span>
+                        <span className="text-xs text-primary">← Best!</span>
                       )}
                     </div>
                   </TableCell>
@@ -309,8 +309,8 @@ const MaximinDemo = () => {
 
       {/* Result box */}
       {showFinalChoice && (
-        <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-4 animate-in fade-in slide-in-from-bottom-2">
-          <p className="font-semibold text-secondary">
+        <div className="bg-primary/10 border border-primary/30 rounded-lg p-4 animate-in fade-in slide-in-from-bottom-2">
+          <p className="font-semibold text-primary">
             Maximin Decision: {alternatives[maximinIndex]}
           </p>
           <p className="text-muted-foreground text-sm mt-1">
