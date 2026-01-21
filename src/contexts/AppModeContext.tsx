@@ -21,41 +21,52 @@ interface AppModeProviderProps {
  * 2. Environment variable (VITE_APP_MODE)
  * 3. Default fallback (editor)
  */
+const getAppMode = (defaultMode: AppMode): AppMode => {
+    // Check all possible URL patterns for mode parameter
+    let urlMode: string | null = null;
+
+    // Pattern 1: Regular query string before hash (e.g., ?mode=preview#/)
+    const regularParams = new URLSearchParams(window.location.search);
+    urlMode = regularParams.get('mode');
+
+    // Pattern 2: Query string after hash (e.g., #/?mode=preview)
+    if (!urlMode && window.location.hash) {
+        const hashParts = window.location.hash.split('?');
+        if (hashParts.length > 1) {
+            const hashParams = new URLSearchParams(hashParts[1]);
+            urlMode = hashParams.get('mode');
+        }
+    }
+
+    // Pattern 3: Check full URL href as fallback
+    if (!urlMode) {
+        const fullUrl = window.location.href;
+        const modeMatch = fullUrl.match(/[?&]mode=(editor|preview)/);
+        if (modeMatch) {
+            urlMode = modeMatch[1];
+        }
+    }
+
+    if (urlMode === 'editor' || urlMode === 'preview') {
+        return urlMode as AppMode;
+    }
+
+    // Second, check environment variable
+    const envMode = import.meta.env.VITE_APP_MODE;
+    if (envMode === 'editor' || envMode === 'preview') {
+        return envMode as AppMode;
+    }
+
+    // Fallback to default
+    return defaultMode;
+};
+
 export const AppModeProvider = ({
     children,
     defaultMode = 'editor'
 }: AppModeProviderProps) => {
-    const mode = useMemo(() => {
-        // First, check URL parameters from both regular search and hash-based search
-        // This handles both ?mode=preview and #/?mode=preview patterns
-        let urlMode: string | null = null;
-
-        // Check regular query string first
-        const regularParams = new URLSearchParams(window.location.search);
-        urlMode = regularParams.get('mode');
-
-        // If not found, check hash-based query string (for HashRouter)
-        if (!urlMode && window.location.hash) {
-            const hashParts = window.location.hash.split('?');
-            if (hashParts.length > 1) {
-                const hashParams = new URLSearchParams(hashParts[1]);
-                urlMode = hashParams.get('mode');
-            }
-        }
-
-        if (urlMode === 'editor' || urlMode === 'preview') {
-            return urlMode as AppMode;
-        }
-
-        // Second, check environment variable
-        const envMode = import.meta.env.VITE_APP_MODE;
-        if (envMode === 'editor' || envMode === 'preview') {
-            return envMode as AppMode;
-        }
-
-        // Fallback to default
-        return defaultMode;
-    }, [defaultMode]);
+    // Calculate mode once on mount - URL won't change during session
+    const mode = getAppMode(defaultMode);
 
     const value = useMemo(() => ({
         mode,
