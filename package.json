@@ -2,7 +2,7 @@
   "name": "vite_react_shadcn_ts",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://decision_theory_matrix.mathvibe.space/",
+  "homepage": "https://decision-theory-matrix.mathvibe.space/",
   "type": "module",
   "scripts": {
     "dev": "vite",
