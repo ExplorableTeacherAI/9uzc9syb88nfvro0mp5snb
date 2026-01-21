@@ -151,25 +151,13 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
   const [mediumDemand, setMediumDemand] = useState(34);
   const [lowDemand, setLowDemand] = useState(33);
 
-  // Handlers that maintain 100% total
+  // Handlers that maintain 100% total (always integers)
   // High Demand changes → Medium Demand adjusts (Low stays fixed)
   const handleHighDemandChange = (newValue: number) => {
-    const diff = newValue - highDemand;
-    const newMedium = mediumDemand - diff;
-
-    // Ensure medium stays within valid range
-    if (newMedium >= 0 && newMedium <= 100) {
-      setHighDemand(newValue);
-      setMediumDemand(newMedium);
-    } else if (newMedium < 0) {
-      // Medium can't go below 0, cap the high value
-      setHighDemand(highDemand + mediumDemand);
-      setMediumDemand(0);
-    } else {
-      // Medium can't exceed 100
-      setHighDemand(0);
-      setMediumDemand(100 - lowDemand);
-    }
+    const clampedValue = Math.max(0, Math.min(100 - lowDemand, newValue));
+    const newMedium = 100 - clampedValue - lowDemand;
+    setHighDemand(clampedValue);
+    setMediumDemand(newMedium);
   };
 
   // Medium Demand changes → adjusts Low when increasing, High when decreasing
@@ -177,55 +165,32 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
     const diff = newValue - mediumDemand;
 
     if (diff > 0) {
-      // Medium is increasing → reduce Low Demand
-      const newLow = lowDemand - diff;
-      if (newLow >= 0) {
+      // Medium is increasing → reduce Low Demand first
+      const reduceFromLow = Math.min(diff, lowDemand);
+      const reduceFromHigh = diff - reduceFromLow;
+
+      if (reduceFromHigh <= highDemand) {
         setMediumDemand(newValue);
-        setLowDemand(newLow);
-      } else {
-        // Low can't go below 0, take from High as well
-        const remaining = diff - lowDemand;
-        const newHigh = highDemand - remaining;
-        if (newHigh >= 0) {
-          setMediumDemand(newValue);
-          setLowDemand(0);
-          setHighDemand(newHigh);
-        }
+        setLowDemand(lowDemand - reduceFromLow);
+        setHighDemand(highDemand - reduceFromHigh);
       }
     } else {
       // Medium is decreasing → increase High Demand
-      const newHigh = highDemand - diff; // diff is negative, so this adds
-      if (newHigh <= 100) {
-        setMediumDemand(newValue);
-        setHighDemand(newHigh);
-      } else {
-        // High can't exceed 100, give to Low as well
-        const remaining = newHigh - 100;
-        setMediumDemand(newValue);
-        setHighDemand(100);
-        setLowDemand(lowDemand + remaining);
-      }
+      const addToHigh = Math.min(-diff, 100 - highDemand);
+      const addToLow = -diff - addToHigh;
+
+      setMediumDemand(newValue);
+      setHighDemand(highDemand + addToHigh);
+      setLowDemand(lowDemand + addToLow);
     }
   };
 
   // Low Demand changes → Medium Demand adjusts (High stays fixed)
   const handleLowDemandChange = (newValue: number) => {
-    const diff = newValue - lowDemand;
-    const newMedium = mediumDemand - diff;
-
-    // Ensure medium stays within valid range
-    if (newMedium >= 0 && newMedium <= 100) {
-      setLowDemand(newValue);
-      setMediumDemand(newMedium);
-    } else if (newMedium < 0) {
-      // Medium can't go below 0, cap the low value
-      setLowDemand(lowDemand + mediumDemand);
-      setMediumDemand(0);
-    } else {
-      // Medium can't exceed 100
-      setLowDemand(0);
-      setMediumDemand(100 - highDemand);
-    }
+    const clampedValue = Math.max(0, Math.min(100 - highDemand, newValue));
+    const newMedium = 100 - highDemand - clampedValue;
+    setLowDemand(clampedValue);
+    setMediumDemand(newMedium);
   };
 
   // Convert to decimal probabilities for calculations
