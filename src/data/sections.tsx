@@ -4,6 +4,7 @@ import { IntroductionSection } from "./sections/IntroductionSection";
 import { MaximaxSection } from "./sections/MaximaxSection";
 import { MaximinSection } from "./sections/MaximinSection";
 import { MinimaxRegretSection } from "./sections/MinimaxRegretSection";
+import { ExpectedUtilitySection } from "./sections/ExpectedUtilitySection";
 import { ComparisonSection } from "./sections/ComparisonSection";
 
 /**
@@ -17,7 +18,8 @@ import { ComparisonSection } from "./sections/ComparisonSection";
  * 2. Maximax Criterion (Optimistic Approach)
  * 3. Maximin Criterion (Pessimistic Approach)
  * 4. Minimax Regret Criterion
- * 5. Comparing the Criteria
+ * 5. Maximizing Expected Utility
+ * 6. Comparing the Criteria
  */
 
 export const sections: ReactElement[] = [
@@ -41,7 +43,12 @@ export const sections: ReactElement[] = [
         <MinimaxRegretSection />
     </FullWidthLayout>,
 
-    // Section 5: Comparing the Criteria
+    // Section 5: Maximizing Expected Utility
+    <FullWidthLayout key="expected-utility" maxWidth="xl">
+        <ExpectedUtilitySection />
+    </FullWidthLayout>,
+
+    // Section 6: Comparing the Criteria
     <FullWidthLayout key="comparison" maxWidth="xl">
         <ComparisonSection />
     </FullWidthLayout>,
