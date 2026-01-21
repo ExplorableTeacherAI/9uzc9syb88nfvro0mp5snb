@@ -146,16 +146,56 @@ const ExpectedUtilityCalculator = ({ probabilities }: ExpectedUtilityCalculatorP
  * Expected Utility Section Component
  */
 export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionContentProps) => {
-  // State for probabilities (stored as percentages 0-100)
+  // State for probabilities (stored as percentages 0-100, always sum to 100)
   const [highDemand, setHighDemand] = useState(33);
   const [mediumDemand, setMediumDemand] = useState(34);
   const [lowDemand, setLowDemand] = useState(33);
 
+  // Handlers that maintain 100% total by adjusting other values proportionally
+  const handleHighDemandChange = (newValue: number) => {
+    const remaining = 100 - newValue;
+    const otherSum = mediumDemand + lowDemand;
+    if (otherSum > 0) {
+      const ratio = remaining / otherSum;
+      setMediumDemand(Math.round(mediumDemand * ratio));
+      setLowDemand(Math.round(lowDemand * ratio));
+    } else {
+      setMediumDemand(Math.round(remaining / 2));
+      setLowDemand(Math.round(remaining / 2));
+    }
+    setHighDemand(newValue);
+  };
+
+  const handleMediumDemandChange = (newValue: number) => {
+    const remaining = 100 - newValue;
+    const otherSum = highDemand + lowDemand;
+    if (otherSum > 0) {
+      const ratio = remaining / otherSum;
+      setHighDemand(Math.round(highDemand * ratio));
+      setLowDemand(Math.round(lowDemand * ratio));
+    } else {
+      setHighDemand(Math.round(remaining / 2));
+      setLowDemand(Math.round(remaining / 2));
+    }
+    setMediumDemand(newValue);
+  };
+
+  const handleLowDemandChange = (newValue: number) => {
+    const remaining = 100 - newValue;
+    const otherSum = highDemand + mediumDemand;
+    if (otherSum > 0) {
+      const ratio = remaining / otherSum;
+      setHighDemand(Math.round(highDemand * ratio));
+      setMediumDemand(Math.round(mediumDemand * ratio));
+    } else {
+      setHighDemand(Math.round(remaining / 2));
+      setMediumDemand(Math.round(remaining / 2));
+    }
+    setLowDemand(newValue);
+  };
+
   // Convert to decimal probabilities for calculations
-  const total = highDemand + mediumDemand + lowDemand;
-  const probabilities = total > 0
-    ? [highDemand / total, mediumDemand / total, lowDemand / total]
-    : [0.33, 0.34, 0.33];
+  const probabilities = [highDemand / 100, mediumDemand / 100, lowDemand / 100];
 
   return (
     <>
@@ -228,7 +268,7 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
           Set your probability beliefs: there's a{" "}
           <InlineStepper
             value={highDemand}
-            onChange={setHighDemand}
+            onChange={handleHighDemandChange}
             min={0}
             max={100}
             step={1}
@@ -239,7 +279,7 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
           chance of <strong>High Demand</strong>,{" "}
           <InlineStepper
             value={mediumDemand}
-            onChange={setMediumDemand}
+            onChange={handleMediumDemandChange}
             min={0}
             max={100}
             step={1}
@@ -250,7 +290,7 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
           chance of <strong>Medium Demand</strong>, and{" "}
           <InlineStepper
             value={lowDemand}
-            onChange={setLowDemand}
+            onChange={handleLowDemandChange}
             min={0}
             max={100}
             step={1}
@@ -260,12 +300,6 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
           />{" "}
           chance of <strong>Low Demand</strong>. Watch the expected utilities update in real-time!
         </InteractiveParagraph>
-
-        {total !== 100 && (
-          <p className="text-sm text-amber-600 mt-2">
-            Note: Your probabilities sum to {total}%. They will be normalized to 100% for calculations.
-          </p>
-        )}
 
         <div className="mt-6">
           <ExpectedUtilityCalculator probabilities={probabilities} />
