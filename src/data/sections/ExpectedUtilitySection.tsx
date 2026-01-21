@@ -306,36 +306,6 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
         </div>
       </Section>
 
-      <Section id="expected-utility-insight" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
-        <Heading level={2}>Key Insights</Heading>
-        <InteractiveParagraph>
-          Notice something interesting: the optimal choice depends heavily on your probability beliefs!
-        </InteractiveParagraph>
-
-        <div className="grid gap-4 mt-4 md:grid-cols-2">
-          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
-            <h3 className="font-semibold text-primary mb-2">When High Demand is Very Likely</h3>
-            <p className="text-sm text-muted-foreground">
-              If you're confident the market will be strong (high probability of High Demand),
-              Product A becomes attractive despite its downside risk — similar to the Maximax mindset.
-            </p>
-          </div>
-
-          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
-            <h3 className="font-semibold text-primary mb-2">When Low Demand is Very Likely</h3>
-            <p className="text-sm text-muted-foreground">
-              If you fear the market will be weak (high probability of Low Demand),
-              Product C's guaranteed $80k looks better — similar to the Maximin mindset.
-            </p>
-          </div>
-        </div>
-
-        <InteractiveParagraph className="mt-4">
-          In fact, Maximax and Maximin can be seen as <strong>special cases</strong> of Expected Utility:
-          Maximax assumes 100% probability on the best state, while Maximin assumes 100% on the worst state.
-          Expected Utility gives you a more nuanced approach when you have real probability estimates.
-        </InteractiveParagraph>
-      </Section>
     </>
   );
 };
