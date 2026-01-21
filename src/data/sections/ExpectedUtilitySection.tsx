@@ -4,9 +4,9 @@ import { Heading } from "@/components/molecules/Heading";
 import { InteractiveParagraph } from "@/components/molecules/InteractiveParagraph";
 import { Hoverable } from "@/components/annotations/Hoverable";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/atoms/ui/table";
-import { Slider } from "@/components/atoms/ui/slider";
+import { InlineStepper } from "@/components/atoms/InlineStepper";
 import { cn } from "@/lib/utils";
-import { Calculator, TrendingUp } from "lucide-react";
+import { Calculator } from "lucide-react";
 
 interface SectionContentProps {
   isPreview?: boolean;
@@ -14,12 +14,13 @@ interface SectionContentProps {
 }
 
 /**
- * Interactive Expected Utility Calculator
+ * Interactive Expected Utility Calculator with inline probability controls
  */
-const ExpectedUtilityCalculator = () => {
-  // Probabilities for each state of nature (must sum to 1)
-  const [probabilities, setProbabilities] = useState([0.33, 0.34, 0.33]);
+interface ExpectedUtilityCalculatorProps {
+  probabilities: number[];
+}
 
+const ExpectedUtilityCalculator = ({ probabilities }: ExpectedUtilityCalculatorProps) => {
   const alternatives = ["Product A", "Product B", "Product C"];
   const statesOfNature = ["High Demand", "Medium Demand", "Low Demand"];
   const payoffs = [
@@ -40,76 +41,8 @@ const ExpectedUtilityCalculator = () => {
     return expectedUtilities.indexOf(Math.max(...expectedUtilities));
   }, [expectedUtilities]);
 
-  // Handle probability change while maintaining sum = 1
-  const handleProbabilityChange = (index: number, newValue: number) => {
-    const newProbs = [...probabilities];
-    const oldValue = newProbs[index];
-    const diff = newValue - oldValue;
-
-    // Distribute the difference among other probabilities proportionally
-    const otherIndices = [0, 1, 2].filter(i => i !== index);
-    const otherSum = otherIndices.reduce((sum, i) => sum + newProbs[i], 0);
-
-    if (otherSum > 0) {
-      otherIndices.forEach(i => {
-        newProbs[i] = Math.max(0, newProbs[i] - (diff * newProbs[i] / otherSum));
-      });
-    } else {
-      // If other probabilities are 0, distribute equally
-      otherIndices.forEach(i => {
-        newProbs[i] = (1 - newValue) / 2;
-      });
-    }
-
-    newProbs[index] = newValue;
-
-    // Normalize to ensure sum = 1
-    const sum = newProbs.reduce((a, b) => a + b, 0);
-    if (sum > 0) {
-      newProbs.forEach((_, i) => {
-        newProbs[i] = newProbs[i] / sum;
-      });
-    }
-
-    setProbabilities(newProbs);
-  };
-
   return (
     <div className="space-y-6">
-      {/* Probability Sliders */}
-      <div className="bg-card border border-border rounded-lg p-6">
-        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" />
-          Set Your Probability Beliefs
-        </h3>
-        <p className="text-sm text-muted-foreground mb-6">
-          Adjust the sliders to set probabilities for each market scenario. The probabilities automatically adjust to sum to 100%.
-        </p>
-
-        <div className="space-y-6">
-          {statesOfNature.map((state, index) => (
-            <div key={state} className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">{state}</span>
-                <span className={cn(
-                  "font-bold text-lg min-w-[60px] text-right",
-                  probabilities[index] > 0.4 ? "text-primary" : "text-muted-foreground"
-                )}>
-                  {(probabilities[index] * 100).toFixed(0)}%
-                </span>
-              </div>
-              <Slider
-                value={[probabilities[index] * 100]}
-                onValueChange={(value) => handleProbabilityChange(index, value[0] / 100)}
-                max={100}
-                min={0}
-                step={1}
-                className="w-full"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Expected Utility Table */}
       <div className="overflow-x-auto">
@@ -187,7 +120,7 @@ const ExpectedUtilityCalculator = () => {
           expected utility of <strong>${expectedUtilities[bestIndex].toFixed(1)}k</strong>.
         </p>
         <p className="text-muted-foreground text-sm mt-2">
-          <em>Try adjusting the probabilities above to see how your optimal choice changes!</em>
+          <em>Try adjusting the probabilities in the paragraph to see how your optimal choice changes!</em>
         </p>
       </div>
 
@@ -213,6 +146,17 @@ const ExpectedUtilityCalculator = () => {
  * Expected Utility Section Component
  */
 export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionContentProps) => {
+  // State for probabilities (stored as percentages 0-100)
+  const [highDemand, setHighDemand] = useState(33);
+  const [mediumDemand, setMediumDemand] = useState(34);
+  const [lowDemand, setLowDemand] = useState(33);
+
+  // Convert to decimal probabilities for calculations
+  const total = highDemand + mediumDemand + lowDemand;
+  const probabilities = total > 0
+    ? [highDemand / total, mediumDemand / total, lowDemand / total]
+    : [0.33, 0.34, 0.33];
+
   return (
     <>
       <Section id="expected-utility-header" padding="lg" isPreview={isPreview} onEditSection={onEditSection}>
@@ -281,11 +225,50 @@ export const ExpectedUtilitySection = ({ isPreview, onEditSection }: SectionCont
       <Section id="expected-utility-calculator" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>Interactive Calculator</Heading>
         <InteractiveParagraph>
-          Adjust the probability sliders below to see how different beliefs about the future change
-          which alternative is optimal. Watch the expected utilities update in real-time!
+          Set your probability beliefs: there's a{" "}
+          <InlineStepper
+            value={highDemand}
+            onChange={setHighDemand}
+            min={0}
+            max={100}
+            step={1}
+            color="#22c55e"
+            bgColor="rgba(34, 197, 94, 0.9)"
+            formatValue={(v) => `${v}%`}
+          />{" "}
+          chance of <strong>High Demand</strong>,{" "}
+          <InlineStepper
+            value={mediumDemand}
+            onChange={setMediumDemand}
+            min={0}
+            max={100}
+            step={1}
+            color="#f59e0b"
+            bgColor="rgba(245, 158, 11, 0.9)"
+            formatValue={(v) => `${v}%`}
+          />{" "}
+          chance of <strong>Medium Demand</strong>, and{" "}
+          <InlineStepper
+            value={lowDemand}
+            onChange={setLowDemand}
+            min={0}
+            max={100}
+            step={1}
+            color="#ef4444"
+            bgColor="rgba(239, 68, 68, 0.9)"
+            formatValue={(v) => `${v}%`}
+          />{" "}
+          chance of <strong>Low Demand</strong>. Watch the expected utilities update in real-time!
         </InteractiveParagraph>
+
+        {total !== 100 && (
+          <p className="text-sm text-amber-600 mt-2">
+            Note: Your probabilities sum to {total}%. They will be normalized to 100% for calculations.
+          </p>
+        )}
+
         <div className="mt-6">
-          <ExpectedUtilityCalculator />
+          <ExpectedUtilityCalculator probabilities={probabilities} />
         </div>
       </Section>
 
