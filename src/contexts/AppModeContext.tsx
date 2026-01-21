@@ -26,9 +26,22 @@ export const AppModeProvider = ({
     defaultMode = 'editor'
 }: AppModeProviderProps) => {
     const mode = useMemo(() => {
-        // First, check URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlMode = urlParams.get('mode');
+        // First, check URL parameters from both regular search and hash-based search
+        // This handles both ?mode=preview and #/?mode=preview patterns
+        let urlMode: string | null = null;
+
+        // Check regular query string first
+        const regularParams = new URLSearchParams(window.location.search);
+        urlMode = regularParams.get('mode');
+
+        // If not found, check hash-based query string (for HashRouter)
+        if (!urlMode && window.location.hash) {
+            const hashParts = window.location.hash.split('?');
+            if (hashParts.length > 1) {
+                const hashParams = new URLSearchParams(hashParts[1]);
+                urlMode = hashParams.get('mode');
+            }
+        }
 
         if (urlMode === 'editor' || urlMode === 'preview') {
             return urlMode as AppMode;
