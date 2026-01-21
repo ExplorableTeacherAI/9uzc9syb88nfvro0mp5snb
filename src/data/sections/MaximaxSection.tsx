@@ -11,6 +11,11 @@ import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
 /**
  * Interactive Maximax Demonstration
  */
+
+interface SectionContentProps {
+  isPreview?: boolean;
+  onEditSection?: (instruction: string) => void;
+}
 const MaximaxDemo = () => {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
@@ -214,8 +219,8 @@ const MaximaxDemo = () => {
               className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all",
                 i < visualStep || (completed && i <= visualStep) ? "bg-primary text-primary-foreground border-primary" :
-                i === visualStep ? "border-primary text-primary" :
-                "border-muted-foreground/30"
+                  i === visualStep ? "border-primary text-primary" :
+                    "border-muted-foreground/30"
               )}
             >
               {i + 1}
@@ -350,17 +355,17 @@ const MaximaxDemo = () => {
 /**
  * Maximax Section Component
  */
-export const MaximaxSection = () => {
+export const MaximaxSection = ({ isPreview, onEditSection }: SectionContentProps) => {
   return (
     <>
-      <Section id="maximax-header" padding="lg">
+      <Section id="maximax-header" padding="lg" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={1}>Maximax Criterion: The Optimist's Choice</Heading>
         <InteractiveParagraph className="text-lg text-muted-foreground mt-2">
           When you believe the best will happen, aim for the highest possible reward.
         </InteractiveParagraph>
       </Section>
 
-      <Section id="maximax-concept" padding="md">
+      <Section id="maximax-concept" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>What is Maximax?</Heading>
         <InteractiveParagraph>
           Maximax is the{" "}
@@ -370,7 +375,7 @@ export const MaximaxSection = () => {
         </InteractiveParagraph>
       </Section>
 
-      <Section id="maximax-algorithm" padding="md">
+      <Section id="maximax-algorithm" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>How Maximax Works</Heading>
         <InteractiveParagraph>
           The algorithm is straightforward:
@@ -388,7 +393,7 @@ export const MaximaxSection = () => {
         </ol>
       </Section>
 
-      <Section id="maximax-demo" padding="md">
+      <Section id="maximax-demo" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>Interactive Example</Heading>
         <InteractiveParagraph>
           Walk through each step to see how Maximax works with our product launch example.

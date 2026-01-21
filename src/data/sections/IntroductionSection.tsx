@@ -12,6 +12,11 @@ interface CellHighlight {
   type: "row" | "col" | "cell" | null;
 }
 
+interface SectionContentProps {
+  isPreview?: boolean;
+  onEditSection?: (instruction: string) => void;
+}
+
 /**
  * Interactive Decision Matrix component for the Introduction section
  */
@@ -136,17 +141,17 @@ const InteractiveDecisionMatrix = () => {
 /**
  * Introduction to Decision Theory Section
  */
-export const IntroductionSection = () => {
+export const IntroductionSection = ({ isPreview, onEditSection }: SectionContentProps) => {
   return (
     <>
-      <Section id="intro-header" padding="lg">
+      <Section id="intro-header" padding="lg" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={1}>Decision Theory: Making Choices Under Uncertainty</Heading>
         <InteractiveParagraph className="text-lg text-muted-foreground mt-2">
           Learn how to make rational decisions when the future is uncertain.
         </InteractiveParagraph>
       </Section>
 
-      <Section id="intro-what-is-decision-theory" padding="md">
+      <Section id="intro-what-is-decision-theory" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>What is Decision-Making Under Uncertainty?</Heading>
         <InteractiveParagraph>
           Imagine you're a business owner deciding which product to launch. You don't know for certain
@@ -158,7 +163,7 @@ export const IntroductionSection = () => {
         </InteractiveParagraph>
       </Section>
 
-      <Section id="intro-key-concepts" padding="md">
+      <Section id="intro-key-concepts" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>The Three Key Concepts</Heading>
         <InteractiveParagraph>
           Every decision problem under uncertainty has three essential components:
@@ -200,7 +205,7 @@ export const IntroductionSection = () => {
         </div>
       </Section>
 
-      <Section id="intro-decision-matrix" padding="md">
+      <Section id="intro-decision-matrix" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>The Decision Matrix (Payoff Table)</Heading>
         <InteractiveParagraph>
           We organize all this information in a{" "}
@@ -222,7 +227,7 @@ export const IntroductionSection = () => {
         </InteractiveParagraph>
       </Section>
 
-      <Section id="intro-challenge" padding="md">
+      <Section id="intro-challenge" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2} enableMath={false}>The Challenge: Which Alternative Should You Choose?</Heading>
         <InteractiveParagraph enableMath={false}>
           Looking at the matrix above, which product would you launch? Product A offers the highest potential profit (<strong>$200k</strong>) but also the biggest risk (<strong>−$50k</strong>). Product C guarantees <strong>$80k</strong> no matter what. There's no single "correct" answer — it depends on your risk tolerance. We'll explore three approaches:{" "}

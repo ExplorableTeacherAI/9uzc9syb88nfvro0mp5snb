@@ -11,6 +11,11 @@ import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
 /**
  * Interactive Maximin Demonstration
  */
+
+interface SectionContentProps {
+  isPreview?: boolean;
+  onEditSection?: (instruction: string) => void;
+}
 const MaximinDemo = () => {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
@@ -214,8 +219,8 @@ const MaximinDemo = () => {
               className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all",
                 i < visualStep || (completed && i <= visualStep) ? "bg-primary text-primary-foreground border-primary" :
-                i === visualStep ? "border-primary text-primary" :
-                "border-muted-foreground/30"
+                  i === visualStep ? "border-primary text-primary" :
+                    "border-muted-foreground/30"
               )}
             >
               {i + 1}
@@ -351,17 +356,17 @@ const MaximinDemo = () => {
 /**
  * Maximin Section Component
  */
-export const MaximinSection = () => {
+export const MaximinSection = ({ isPreview, onEditSection }: SectionContentProps) => {
   return (
     <>
-      <Section id="maximin-header" padding="lg">
+      <Section id="maximin-header" padding="lg" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={1}>Maximin Criterion: The Pessimist's Choice</Heading>
         <InteractiveParagraph className="text-lg text-muted-foreground mt-2">
           Protect yourself from the worst — guarantee the best possible floor.
         </InteractiveParagraph>
       </Section>
 
-      <Section id="maximin-concept" padding="md">
+      <Section id="maximin-concept" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>What is Maximin?</Heading>
         <InteractiveParagraph>
           Maximin is the{" "}
@@ -374,7 +379,7 @@ export const MaximinSection = () => {
         </InteractiveParagraph>
       </Section>
 
-      <Section id="maximin-algorithm" padding="md">
+      <Section id="maximin-algorithm" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>How Maximin Works</Heading>
         <InteractiveParagraph>
           The algorithm protects against the worst:
@@ -392,7 +397,7 @@ export const MaximinSection = () => {
         </ol>
       </Section>
 
-      <Section id="maximin-demo" padding="md">
+      <Section id="maximin-demo" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>Interactive Example</Heading>
         <InteractiveParagraph>
           Walk through each step to see how Maximin protects you from the worst outcomes.

@@ -11,6 +11,11 @@ import { ChevronRight, RotateCcw, Sparkles } from "lucide-react";
 /**
  * Interactive Minimax Regret Demonstration
  */
+
+interface SectionContentProps {
+  isPreview?: boolean;
+  onEditSection?: (instruction: string) => void;
+}
 const MinimaxRegretDemo = () => {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
@@ -26,7 +31,7 @@ const MinimaxRegretDemo = () => {
   const [scanningMaxRegretRow, setScanningMaxRegretRow] = useState(-1);
   const [showFinalChoice, setShowFinalChoice] = useState(false);
   // New state for regret calculation animation
-  const [calculatingRegretCell, setCalculatingRegretCell] = useState<{row: number, col: number} | null>(null);
+  const [calculatingRegretCell, setCalculatingRegretCell] = useState<{ row: number, col: number } | null>(null);
   const [calculationPhase, setCalculationPhase] = useState<'none' | 'best' | 'minus' | 'payoff' | 'equals' | 'result'>('none');
   const [revealedRegretCells, setRevealedRegretCells] = useState<string[]>([]);
 
@@ -392,8 +397,8 @@ const MinimaxRegretDemo = () => {
               className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all",
                 i < visualStep || (completed && i <= visualStep) ? "bg-primary text-primary-foreground border-primary" :
-                i === visualStep ? "border-primary text-primary" :
-                "border-muted-foreground/30"
+                  i === visualStep ? "border-primary text-primary" :
+                    "border-muted-foreground/30"
               )}
             >
               {i + 1}
@@ -422,8 +427,8 @@ const MinimaxRegretDemo = () => {
             {step === 3 && revealedRegretCells.length > 0
               ? "Calculating Regret Values..."
               : step >= 4
-              ? "Regret Matrix"
-              : "Payoff Matrix"}
+                ? "Regret Matrix"
+                : "Payoff Matrix"}
           </h4>
           <div className="overflow-hidden">
             <Table className="border border-border rounded-lg">
@@ -553,17 +558,17 @@ const MinimaxRegretDemo = () => {
 /**
  * Minimax Regret Section Component
  */
-export const MinimaxRegretSection = () => {
+export const MinimaxRegretSection = ({ isPreview, onEditSection }: SectionContentProps) => {
   return (
     <>
-      <Section id="minimax-regret-header" padding="lg">
+      <Section id="minimax-regret-header" padding="lg" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={1}>Minimax Regret: Minimizing "What If" Feelings</Heading>
         <InteractiveParagraph className="text-lg text-muted-foreground mt-2">
           Avoid the pain of looking back and wishing you'd chosen differently.
         </InteractiveParagraph>
       </Section>
 
-      <Section id="minimax-regret-concept" padding="md">
+      <Section id="minimax-regret-concept" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>What is Regret?</Heading>
         <InteractiveParagraph>
           <Hoverable tooltip="The difference between what you actually got and what you could have gotten if you had made the best choice for that particular outcome.">
@@ -572,7 +577,7 @@ export const MinimaxRegretSection = () => {
         </InteractiveParagraph>
       </Section>
 
-      <Section id="minimax-regret-philosophy" padding="md">
+      <Section id="minimax-regret-philosophy" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>The Minimax Regret Philosophy</Heading>
         <InteractiveParagraph>
           The Minimax Regret criterion says: "I want to minimize the maximum regret I could
@@ -587,7 +592,7 @@ export const MinimaxRegretSection = () => {
         </div>
       </Section>
 
-      <Section id="minimax-regret-algorithm" padding="md">
+      <Section id="minimax-regret-algorithm" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>How Minimax Regret Works</Heading>
         <InteractiveParagraph>
           The algorithm minimizes your worst "what if" feeling:
@@ -608,7 +613,7 @@ export const MinimaxRegretSection = () => {
         </ol>
       </Section>
 
-      <Section id="minimax-regret-demo" padding="md">
+      <Section id="minimax-regret-demo" padding="md" isPreview={isPreview} onEditSection={onEditSection}>
         <Heading level={2}>Interactive Example</Heading>
         <InteractiveParagraph>
           Walk through each step to see how the regret matrix is built and the final decision is made.
